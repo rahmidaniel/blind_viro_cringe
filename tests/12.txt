@@ -1,0 +1,14 @@
+map city c1
+virologist v1
+move v1 c1
+virologist v2
+move v2 c1
+statusEffect e1 chorea:true duration:1
+materials m1 5 5
+agent a1 e1 m1
+placeAgent a1 -v v1 agentInventory
+statusEffect e2 reflect:true
+equipment gloves e2 3
+placeEquipment gloves -v v2
+apply a1 v1 v2 -d 1.0
+log -a

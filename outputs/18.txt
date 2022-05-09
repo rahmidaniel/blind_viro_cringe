@@ -1,0 +1,29 @@
+l1:
+	neighbors: -
+	characters: v1
+	infected: true
+	geneticCode: -
+	bearAgent: bA
+v1:
+	currentField: l1
+	apMax : 3
+	apCurrent : 3
+	agentRecipes: -
+	agentInventory: -
+	materials: -
+	maxMaterials: -
+	equipment: -
+	activeEffects: bE_1
+bA:
+	name: -
+	lifespan : 3
+	recipe:
+    nucleotide: 0
+	aminoacid: 0
+	effect: bE
+bE:
+	bear: true
+	duration: -1
+bE_1:
+	bear: true
+	duration: -1

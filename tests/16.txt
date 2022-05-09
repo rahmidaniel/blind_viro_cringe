@@ -1,0 +1,8 @@
+map city c1
+virologist v1
+move v1 c1
+statusEffect ef1 dead:true
+equipment axe ef1 1
+placeEquipment axe -v v1
+drop axe v1
+log -a

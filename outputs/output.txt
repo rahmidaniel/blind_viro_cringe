@@ -1,0 +1,23 @@
+s1:
+	neighbors: -
+	characters: v1
+	supply: 
+		nucleotide: 0
+		aminoacid: 0
+	totalSupply: 
+		nucleotide: 10
+		aminoacid: 10
+v1:
+	currentField: s1
+	apMax: 3
+	apCurrent: 2
+	agentRecipes: -
+	agentInventory: -
+	materials: 
+		nucleotide: 5
+		aminoacid: 5
+	maxMaterials: 
+		nucleotide: 10
+		aminoacid: 10
+	equipment: -
+	activeEffects: -

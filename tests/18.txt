@@ -1,0 +1,8 @@
+map lab l1;
+virologist v1
+statusEffect bE bear:true duration:-1
+materials m1 0 0
+agent bA bE m1
+placeAgent bA -f l1 -i
+move v1 l1
+log -a

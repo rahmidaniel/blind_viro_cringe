@@ -1,0 +1,7 @@
+map city c1; city c2
+c2
+c1
+virologist v1
+move v1 c1
+move v1 c2
+log -a

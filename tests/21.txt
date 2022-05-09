@@ -1,0 +1,9 @@
+map city c1;
+virologist v1
+virologist v2
+move v1 c1
+move v2 c1
+statusEffect bE bear:true duration:-1
+placeEffect bE v1
+endTurn v1
+log -a

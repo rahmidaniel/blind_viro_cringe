@@ -1,0 +1,16 @@
+c1:
+	neighbors: c2
+	characters: -
+c2:
+	neighbors: c1
+	characters: v1
+v1:
+	currentField: c2
+	apMax: 3
+	apCurrent: 2
+	agentRecipes: -
+	agentInventory: -
+	materials: -
+	maxMaterials: -
+	equipment: -
+	activeEffects: -

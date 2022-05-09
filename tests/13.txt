@@ -1,0 +1,13 @@
+map city c1
+virologist v1
+move v1 c1
+statusEffect e1 chorea:true duration:1
+materials m1 5 5
+materials m2 10 10
+materials m3 5 5
+agent a1 e1 m1
+placeAgent a1 -v v1 agentRecipes
+placeMaterials m2 -v -m v1
+placeMaterials m3 -v v1
+craft a1 v1
+log -a

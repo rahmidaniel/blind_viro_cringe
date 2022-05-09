@@ -1,0 +1,26 @@
+l1:
+	neighbors: -
+	characters: v1
+	infected: false
+	geneticCode: a1
+	bearAgent: -
+v1:
+	currentField : l1
+	apMax : 3
+	apCurrent : 2
+    agentRecipes: a1
+	agentInventory: -
+	materials: -
+	maxMaterials: -
+	equipment: -
+    activeEffects: -
+a1:
+	name: -
+	lifespan: 3
+	recipe:
+		nucleotide: 10
+		aminoacid: 9
+	effect: e1
+e1:
+	amnesia: true
+	duration: -1

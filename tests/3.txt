@@ -1,0 +1,6 @@
+map city c1; shelter s1
+s1
+c1
+virologist v1
+move v1 c1
+move v1 s1

@@ -1,0 +1,21 @@
+s1:
+	neighbors: -
+	characters: v1
+	equipment: -
+v1:
+	currentField : s1
+	apMax : 3
+	apCurrent : 2
+agentRecipes: -
+	agentInventory: -
+	materials: -
+	maxMaterials: -
+	equipment: cloak
+    activeEffects: e1
+cloak:
+	name: -
+	durability: -1
+	effect: e1
+e1:
+	immunity: 0.9
+	duration: -1

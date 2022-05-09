@@ -1,0 +1,32 @@
+c1:
+	neighbors: -
+	characters: v1, v2
+v1:
+	currentField: c1
+	apMax : 3
+	apCurrent : 2
+	agentRecipes: -
+	agentInventory: -
+	materials: -
+	maxMaterials: -
+	equipment: eq
+	activeEffects: eqE
+v2:
+	currentField: c1
+	apMax : 3
+	apCurrent : 3
+	agentRecipes: -
+	agentInventory: -
+	materials: -
+	maxMaterials: -
+	equipment: -
+	activeEffects: pE
+eq:
+	name: -
+	durability: -1
+	effect: eqE
+pE:
+	paralyzed: true
+	duration: 1
+eqE:
+	duration: -1

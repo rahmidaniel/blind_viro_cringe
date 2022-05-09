@@ -1,0 +1,10 @@
+map storage st1;
+virologist v1
+move v1 st1
+materials m1 10 10
+placeMaterials m1 -f -m st1
+placeMaterials m1 -f st1
+statusEffect bE bear:true duration:-1
+placeEffect bE v1
+endTurn v1
+log -a
