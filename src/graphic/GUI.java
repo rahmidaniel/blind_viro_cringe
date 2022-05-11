@@ -72,10 +72,6 @@ public class GUI extends JFrame{
         setResizable(false);
         setTitle("");
         addKeyListener(new KL());
-        imgDim.put("playerIcon",new Dimension(50,50));
-        imgDim.put("equipmentIcon",new Dimension(30,30));
-        imgDim.put("console", new Dimension(250,100));
-        imgDim.put("map",new Dimension(100,100));
     }
     private abstract class InterfaceElement extends JPanel {
         protected String name;
@@ -116,16 +112,26 @@ public class GUI extends JFrame{
         }
     }
     public class AttributesPanel extends InterfaceElement {
-        Image bgr, portrait;
+        BufferedImage bgr, portrait, status;
+        StatusEffect active = new StatusEffect();
         int amino = 10, nucleo = 5, ap = 3;
         public void Update(int ap, Materials mat) {
         }
         public AttributesPanel() {
+            active.SetBear(true);
+            active.SetParalyzed(true);
+            active.SetAmnesia(true);
+            active.SetChorea(true);
+            active.SetBagsize(10);
+            active.SetDead(true);
+            active.SetImmunity(1.0f);
+            active.SetReflect(true);
             name = "attributesPanel";
             setOpaque(false);
             try {
                 bgr = ImageIO.read(new File("assets/attrbgr.png"));
                 portrait = ImageIO.read(new File("assets/portrait.png"));
+                status = ImageIO.read(new File("assets/statuseffects.png"));
                 img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 imgDim.put(name,new Dimension(img.getWidth(null),img.getHeight(null)));
             }
@@ -140,13 +146,56 @@ public class GUI extends JFrame{
             Graphics gr = img.getGraphics();
             gr.setFont(font1);
             gr.drawImage(bgr,0,0,null);
-            gr.drawImage(portrait,20,20,null);
+            gr.drawImage(portrait,8,8,null);
             String aminoStr = String.format("Aminoacid count:  %d", amino);
             String nucleoStr = String.format("Nucleotide count: %d", nucleo);
             String apStr = String.format("Action Points:    %d", ap);
-            gr.drawString(aminoStr, 5,210);
-            gr.drawString(nucleoStr, 5,230);
-            gr.drawString(apStr, 5,250);
+            gr.drawString(aminoStr, 5,230);
+            gr.drawString(nucleoStr, 5,246);
+            gr.drawString(apStr, 5,262);
+            int i = 0;
+            int xOffs = 8;
+            int yOffs = 8+128+32;
+            if(active.GetParalyzed()) {
+                BufferedImage image = ((BufferedImage) status).getSubimage(0,0,32,32);
+                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
+                i++;
+            }
+            if(active.GetDead()) {
+                BufferedImage image = ((BufferedImage) status).getSubimage(32,0,32,32);
+                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
+                i++;
+            }
+            if(active.GetChorea()) {
+                BufferedImage image = ((BufferedImage) status).getSubimage(64,0,32,32);
+                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
+                i++;
+            }
+            if(active.GetReflect()) {
+                BufferedImage image = ((BufferedImage) status).getSubimage(96,0,32,32);
+                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
+                i++;
+            }
+            if(active.GetBagsize()>0) {
+                BufferedImage image = ((BufferedImage) status).getSubimage(0,32,32,32);
+                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
+                i++;
+            }
+            if(active.GetAmnesia()) {
+                BufferedImage image = ((BufferedImage) status).getSubimage(32,32,32,32);
+                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
+                i++;
+            }
+            if(active.GetImmunity()>0) {
+                BufferedImage image = ((BufferedImage) status).getSubimage(64,32,32,32);
+                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
+                i++;
+            }
+            if(active.GetBear()) {
+                BufferedImage image = ((BufferedImage) status).getSubimage(96,32,32,32);
+                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
+                i++;
+            }
             g.drawImage(img, 0, 0, this);
             this.repaint();
         }
@@ -158,9 +207,9 @@ public class GUI extends JFrame{
             setOpaque(false);
             try {
                 bgr = ImageIO.read(new File("assets/eqbgr.png"));
-                e1 = ImageIO.read(new File("assets/eq1.png"));
-                e2 = ImageIO.read(new File("assets/eq2.png"));
-                e3 = ImageIO.read(new File("assets/eq3.png"));
+                e1 = ImageIO.read(new File("assets/axe_16.png")).getScaledInstance(64, 64, Image.SCALE_DEFAULT);
+                e2 = ImageIO.read(new File("assets/cloak_16.png")).getScaledInstance(64, 64, Image.SCALE_DEFAULT);
+                e3 = ImageIO.read(new File("assets/glove_16.png")).getScaledInstance(64, 64, Image.SCALE_DEFAULT);
                 img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 imgDim.put(name,new Dimension(img.getWidth(null),img.getHeight(null)));
             }
@@ -176,8 +225,8 @@ public class GUI extends JFrame{
             Graphics gr = img.getGraphics();
             gr.setFont(font1);
             gr.drawImage(bgr,0,0,null);
-            gr.drawImage(e1,15,350-3*95-10,null);
-            gr.drawImage(e2,15,350-2*95-10,null);
+            gr.drawImage(e1,15,350-3*95-10-16,null);
+            gr.drawImage(e2,15,350-2*95-10-8,null);
             gr.drawImage(e3,15,350-95-10,null);
             gr.drawString("Equipment:", 8, 25);
             g.drawImage(img, 0, 0, this);
