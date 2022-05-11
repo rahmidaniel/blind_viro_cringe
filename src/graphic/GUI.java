@@ -8,14 +8,17 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GUI extends JFrame{
     private GameController gc = GameController.getInstance();
     private Color colorBGR = Color.black;
-    private int wWIDTH = 1200;
-    private int wHEIGHT = 600;
+    private int wWIDTH = 1536;
+    private int wHEIGHT = 552+350;
+    private Font font1 = null;
+    private Font font2 = null;
     enum GUIState {
         DEFAULT, MOVE, APPLY_AGENT_STEP1, APPLY_AGENT_STEP2, CRAFT_AGENT, DROP_EQUIPMENT, CHOP, STEAL_EQUIPMENT_STEP1, STEAL_EQUIPMENT_STEP2
     }
@@ -28,25 +31,40 @@ public class GUI extends JFrame{
         return instance;
     }
     private GUI() {
+        try {
+            font1 = Font.createFont(Font.TRUETYPE_FONT, new File("assets/VCR_OSD_MONO_1.001.ttf")).deriveFont(16f); //VCR_OSD_MONO_1.001.ttf
+            font2 = Font.createFont(Font.TRUETYPE_FONT, new File("assets/3Dventure.ttf")).deriveFont(16f); //VCR_OSD_MONO_1.001.ttf
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         JPanel UIPanel = new JPanel();
 
         UIPanel.setBackground(colorBGR);
         Background bgr = new Background();
         EquipmentPanel eq = new EquipmentPanel();
-        EquipmentPanel eq1 = new EquipmentPanel();
-        EquipmentPanel eq2 = new EquipmentPanel();
-        EquipmentPanel eq3 = new EquipmentPanel();
-        EquipmentPanel eq4 = new EquipmentPanel();
-        //contentPane.setPreferredSize(new Dimension(wWIDTH, wHEIGHT));
+        AttributesPanel ap = new AttributesPanel();
+        MultiUsePanel mu = new MultiUsePanel();
+        Map map = new Map();
+        Console con = new Console();
+        JPanel filler = new JPanel();
+        JPanel fill = new JPanel();
+        filler.setBackground(Color.gray);
+        filler.setLayout(new BorderLayout());
+        filler.add(fill, BorderLayout.CENTER);
+        fill.setBackground(Color.DARK_GRAY);
+
+        //filler.setPreferredSize(new Dimension(bgr.getWidth(),350));//-eq.getWidth()-ap.getWidth(),350));
+        contentPane.setPreferredSize(new Dimension(wWIDTH, wHEIGHT));
         contentPane.setBackground(colorBGR);
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         contentPane.add(bgr);
         UIPanel.setLayout(new BoxLayout(UIPanel, BoxLayout.X_AXIS));
+        UIPanel.add(ap);
         UIPanel.add(eq);
-        UIPanel.add(eq1);
-        UIPanel.add(eq2);
-        UIPanel.add(eq3);
-        UIPanel.add(eq4);
+        UIPanel.add(mu);
+        UIPanel.add(con);
+        UIPanel.add(map);
+        UIPanel.add(filler);
         contentPane.add(UIPanel);
         setContentPane(contentPane);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -55,9 +73,7 @@ public class GUI extends JFrame{
         setTitle("");
         addKeyListener(new KL());
         imgDim.put("playerIcon",new Dimension(50,50));
-        imgDim.put("attributesPanel",new Dimension(50,40));
         imgDim.put("equipmentIcon",new Dimension(30,30));
-        imgDim.put("multiUseContainer",new Dimension(50,100));
         imgDim.put("console", new Dimension(250,100));
         imgDim.put("map",new Dimension(100,100));
     }
@@ -71,7 +87,6 @@ public class GUI extends JFrame{
             img.getGraphics().clearRect(0, 0, img.getWidth(null), img.getHeight(null));
         };
     }
-
     private ArrayList<InterfaceElement> interfaceElements = new ArrayList<>();
     public class Background extends InterfaceElement{
         Image bgr, fieldImage;
@@ -79,7 +94,8 @@ public class GUI extends JFrame{
             name = "background";
             setBackground(colorBGR);
             try {
-                bgr = ImageIO.read(new File("assets/xdddd.png"));
+                bgr = ImageIO.read(new File("assets/lab.png"));
+                wWIDTH = bgr.getWidth(null);
                 img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 imgDim.put(name,new Dimension(img.getWidth(null),img.getHeight(null)));
             }
@@ -88,7 +104,7 @@ public class GUI extends JFrame{
             }
             init();
         }
-        public Background(Field f) {
+        public void Update(Field f) {
             fieldImage = imgMap.get(f);
         }
         @Override
@@ -97,6 +113,42 @@ public class GUI extends JFrame{
                 img.getGraphics().drawImage(bgr,0,0,null);
                 g.drawImage(img, 0, 0, this);
                 this.repaint();
+        }
+    }
+    public class AttributesPanel extends InterfaceElement {
+        Image bgr, portrait;
+        int amino = 10, nucleo = 5, ap = 3;
+        public void Update(int ap, Materials mat) {
+        }
+        public AttributesPanel() {
+            name = "attributesPanel";
+            setOpaque(false);
+            try {
+                bgr = ImageIO.read(new File("assets/attrbgr.png"));
+                portrait = ImageIO.read(new File("assets/portrait.png"));
+                img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                imgDim.put(name,new Dimension(img.getWidth(null),img.getHeight(null)));
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            init();
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics gr = img.getGraphics();
+            gr.setFont(font1);
+            gr.drawImage(bgr,0,0,null);
+            gr.drawImage(portrait,20,20,null);
+            String aminoStr = String.format("Aminoacid count:  %d", amino);
+            String nucleoStr = String.format("Nucleotide count: %d", nucleo);
+            String apStr = String.format("Action Points:    %d", ap);
+            gr.drawString(aminoStr, 5,210);
+            gr.drawString(nucleoStr, 5,230);
+            gr.drawString(apStr, 5,250);
+            g.drawImage(img, 0, 0, this);
+            this.repaint();
         }
     }
     public class EquipmentPanel extends InterfaceElement {
@@ -117,36 +169,122 @@ public class GUI extends JFrame{
             }
             init();
         }
+        public void Update(ArrayList<Equipment> eq) {}
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            img.getGraphics().drawImage(bgr,0,0,null);
-            img.getGraphics().drawImage(e1,5,5,null);
-            img.getGraphics().drawImage(e2,5,40,null);
-            img.getGraphics().drawImage(e3,5,75,null);
+            Graphics gr = img.getGraphics();
+            gr.setFont(font1);
+            gr.drawImage(bgr,0,0,null);
+            gr.drawImage(e1,15,350-3*95-10,null);
+            gr.drawImage(e2,15,350-2*95-10,null);
+            gr.drawImage(e3,15,350-95-10,null);
+            gr.drawString("Equipment:", 8, 25);
             g.drawImage(img, 0, 0, this);
             this.repaint();
         }
     }
-    public class AttributesPanel extends InterfaceElement {
-        Image ap, amino, nucleo, bgr;
-        void Draw(Graphics g) {}
-        public AttributesPanel(int ap, Materials mat) {
+    public class MultiUsePanel extends InterfaceElement {
+        Image bgr;
+        int state = 0;
+        public MultiUsePanel() {
+            name = "multiUsePanel";
+            setOpaque(false);
+            try {
+                bgr = ImageIO.read(new File("assets/multibgr.png"));
+                img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                imgDim.put(name,new Dimension(img.getWidth(null),img.getHeight(null)));
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            init();
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics gr = img.getGraphics();
+            gr.setFont(font1);
+            gr.drawImage(bgr,0,0,null);
+            gr.drawString("<-Q-              -E->", 1,20);
+            switch (state) {
+                case 0:
+                    gr.drawString("Known Agents", 45,20);
+                    break;
+                case 1:
+                    gr.drawString("Owned Agents", 5,40);
+                    break;
+                case 2:
+                    gr.drawString("Virologists on field", 5,40);
+                    break;
+                    //... TODO
+            }
+            g.drawImage(img, 0, 0, this);
+            this.repaint();
         }
     }
-    public class MultiUse extends InterfaceElement {
-        Image bgr, text;
-        int state = 0;
-        void Draw(Graphics g) {}
-    }
     public class Console extends InterfaceElement {
-        Image bgr, text;
-        void Draw(Graphics g) {}
+        Image bgr;
+        public Console() {
+            name = "console";
+            setOpaque(false);
+            try {
+                bgr = ImageIO.read(new File("assets/consolebgr.png"));
+                img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                imgDim.put(name,new Dimension(img.getWidth(null),img.getHeight(null)));
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            init();
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics gr = img.getGraphics();
+            gr.setFont(font1);
+            gr.drawImage(bgr,0,0,null);
+            gr.drawString("This is the Console :)))", 95,60);
+
+            g.drawImage(img, 0, 0, this);
+            this.repaint();
+        }
     }
     public class Map extends InterfaceElement {
-        Image map;
-        ArrayList<Image> vir;
-        void Draw(Graphics g) {}
+        ArrayList<Point> virLoc = new ArrayList<>();
+        Image bgr;
+        public Map() {
+            name = "map";
+            virLoc.add(new Point(40,40));
+            virLoc.add(new Point(80,195));
+            virLoc.add(new Point(260,195));
+            setOpaque(false);
+            try {
+                bgr = ImageIO.read(new File("assets/mapbgr.png"));
+                img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                imgDim.put(name,new Dimension(img.getWidth(null),img.getHeight(null)));
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            init();
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics gr = img.getGraphics();
+            gr.setFont(font2);
+            gr.setColor(Color.BLACK);
+            gr.drawImage(bgr,0,0,null);
+            gr.drawString("This is the map OwO", 0,350);
+            int i = 1;
+            for(Point p: virLoc) {
+                String vStr = String.format("V%d", i++);
+                gr.drawString(vStr, p.x, p.y);
+            }
+            g.drawImage(img, 0, 0, this);
+            this.repaint();
+        }
     }
     private int targetStep1 = 0;
     private HashMap<IViewable, Image> imgMap = new HashMap<>();
