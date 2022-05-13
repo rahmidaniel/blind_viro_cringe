@@ -34,6 +34,15 @@ public class Equipment {
 		effect = e;
 		durability = d;
 	}
+	/**
+	 * Kontruktor, amely a paraméterként kapott effektel rendelkező tárgyat hozza létre.
+	 * @param e
+	 */
+	public Equipment(StatusEffect e, int d, String n) {
+		effect = e;
+		durability = d;
+		name = n;
+	}
 
 	/**
 	 * Implicit getter a tárgy effektje számára.

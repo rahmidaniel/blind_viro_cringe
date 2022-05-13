@@ -23,6 +23,8 @@ public class Virologist extends Character implements IViewable {
 
 	/** Tárolja a jelenlegi és a maximum anyagokat*/
 	private Materials materials, maxMaterials;
+
+	private int baseBagSize=10;
 	
 	/** Tárolja a felszereléseket, amelyek a virológusnál van*/
 	private ArrayList<Equipment> equipment;
@@ -65,6 +67,8 @@ public class Virologist extends Character implements IViewable {
 	 * @param agent Az ágens amit készít a virológus
 	 * */
 	public void CraftAgent(Agent agent) {
+		if(agent == null)
+			return;
 		apCurrent--;
 		if (agentRecipes.contains(agent) && materials.CanCraft(agent.GetRecipe())) {
 			agentInventory.add(agent);
@@ -260,19 +264,34 @@ public class Virologist extends Character implements IViewable {
 		//check for bear
 		boolean isBear = false;
 		boolean isParalyzed = false;
+		boolean hasChorea = false;
 		for (StatusEffect e : activeEffects) {
+			if (e.GetDead()) {
+				this.SetApCurrent(0);
+			}
 			if (e.GetBear()) {
 				isBear = true;
 			}
 			else if(e.GetParalyzed()){
 				isParalyzed = true;
 			}
+			else if (e.GetChorea()) {
+				hasChorea = true;
+			}
+			else if(e.GetBagsize()!=0){
+				SetMaxMaterials(new Materials(baseBagSize+e.GetBagsize(),baseBagSize+e.GetBagsize()));
+			}
 		}
 
 		if(isBear && !isParalyzed)
 		{
 			StatusEffect.Bear(this);
-			((Virologist)this).SetApCurrent(0);
+			this.SetApCurrent(0);
+		}
+		else if(hasChorea)
+		{
+			while(this.GetApCurrent() > 0)
+				StatusEffect.Chorea(this);
 		}
 
 		for (StatusEffect e : activeEffects) {

@@ -145,7 +145,7 @@ public class GameController implements IViewable {
 	
 	/** Lépteti a játékot, a következő játékos körét indítja el.*/
 	public void NextTurn() {
-		if(agents.size() != 0 && chQueue.element().GetRecipeCount()== agents.size()) {
+		if(agents.size() != 0 && chQueue.element().GetRecipeCount() == agents.size()) {
 			EndGame(chQueue.element());
 			return;
 		}

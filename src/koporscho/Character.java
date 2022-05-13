@@ -112,12 +112,7 @@ public abstract class Character {
 		Iterator<StatusEffect> i = activeEffects.iterator();
 		while(i.hasNext()) {
 			StatusEffect e = i.next();
-			if (e.GetChorea()) {
-				StatusEffect.Chorea(this);
-			}
 			if (e.GetParalyzed()) {
-				System.out.println("Virologist is paralyzed!");
-				//GameController.NextTurn();
 				((Virologist)this).SetApCurrent(0);
 			}
 			if (e.reduceDuration() == 0) {

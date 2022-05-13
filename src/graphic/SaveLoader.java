@@ -74,7 +74,7 @@ public class SaveLoader {
      */
     private static  void createVirologist(String cmd) {
         String[] proc = cmd.split(" ");
-        Virologist v = new Virologist("Majon");
+        Virologist v = new Virologist(proc[1]);
         virologists.add((koporscho.Character)v);
         objectIDs.put(v, proc[1]);
         objectIDsInv.put(proc[1], v);
@@ -159,7 +159,7 @@ public class SaveLoader {
      */
     private static void createAgent(String cmd) {
         String[] proc = cmd.split(" ");
-        Agent a = new Agent((StatusEffect) objectIDsInv.get(proc[2]),(Materials) objectIDsInv.get(proc[3]));
+        Agent a = new Agent((StatusEffect) objectIDsInv.get(proc[2]),(Materials) objectIDsInv.get(proc[3]), proc[1]);
         agents.add(a);
         objectIDs.put(a, proc[1]);
         objectIDsInv.put(proc[1], a);
@@ -171,7 +171,7 @@ public class SaveLoader {
      */
     private static void createEquipment(String cmd) {
         String[] proc = cmd.split(" ");
-        Equipment e = new Equipment((StatusEffect) objectIDsInv.get(proc[2]), Integer.parseInt(proc[3]));
+        Equipment e = new Equipment((StatusEffect) objectIDsInv.get(proc[2]), Integer.parseInt(proc[3]), proc[1]);
         equipment.add(e);
         objectIDs.put(e, proc[1]);
         objectIDsInv.put(proc[1], e);

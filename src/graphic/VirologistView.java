@@ -12,6 +12,9 @@ public class VirologistView extends View{
                 bear = true;
         }
         if(bear)
-            GUI.getInstance().getMapPanel().update(vir);
+            GUI.getInstance().getMapPanel().update(vir, true);
+        else
+            GUI.getInstance().getMapPanel().update(vir, false);
+
     }
 }

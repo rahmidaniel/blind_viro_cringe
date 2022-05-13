@@ -22,10 +22,8 @@ public class GameMap {
 	private ArrayList<Field> fields;
 
 	/**
-	 * Létrehozza a pályát a paraméterként kapott karakterekből, ágensekből és felszerelésekből.		//TODO
-	 * @param c Karakterek tömbje
-	 * @param a Ágensek tömbje
-	 * @param e Felszerelések tömbje
+	 * Létrehozza a pályát a paraméterként mezőkből.
+	 * @param f A mezők tömbje
 	 */
 	public GameMap(ArrayList<Field> f) {
 		fields=f;
