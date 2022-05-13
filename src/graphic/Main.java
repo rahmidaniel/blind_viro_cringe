@@ -9,5 +9,12 @@ public class Main {
         System.out.println("asdas");
         GUI g = GUI.getInstance();
         g.setVisible(true);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        gc.NotifyViews();
+
     }
 }

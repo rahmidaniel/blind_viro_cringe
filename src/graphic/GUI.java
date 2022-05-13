@@ -36,13 +36,19 @@ public class GUI extends JFrame{
         if (instance == null) instance = new GUI();
         return instance;
     }
-    private Background bgrPanel = new Background();
-    private EquipmentPanel eqPanel = new EquipmentPanel();
-    private AttributesPanel attrPanel = new AttributesPanel();
-    private MultiUsePanel muPanel = new MultiUsePanel();
-    private Map mapPanel = new Map();
-    private Console conPanel = new Console();
+    private Background bgrPanel;// = new Background();
+    private EquipmentPanel eqPanel;// = new EquipmentPanel();
+    private AttributesPanel attrPanel;// = new AttributesPanel();
+    private MultiUsePanel muPanel;// = new MultiUsePanel();
+    private Map mapPanel;// = new Map();
+    //private Console conPanel = new Console();
     private GUI() {
+        bgrPanel = new Background();
+        eqPanel = new EquipmentPanel();
+        attrPanel = new AttributesPanel();
+        muPanel = new MultiUsePanel();
+        mapPanel = new Map();
+        //private Console conPanel = new Console();
         gc.AddView(gcView);
         for (koporscho.Character v: gc.GetChQueue()) {
             ((Virologist)v).AddView(new VirologistView());
@@ -72,7 +78,7 @@ public class GUI extends JFrame{
         UIPanel.add(attrPanel);
         UIPanel.add(eqPanel);
         UIPanel.add(muPanel);
-        UIPanel.add(conPanel);
+        //UIPanel.add(conPanel);
         UIPanel.add(mapPanel);
         UIPanel.add(filler);
         contentPane.add(UIPanel);
@@ -94,6 +100,7 @@ public class GUI extends JFrame{
         public void init() {
             setPreferredSize(imgDim.get(name));
             update();
+            repaint();
         }
         public abstract void update();
         protected void paintComponent(Graphics g) {
@@ -106,7 +113,7 @@ public class GUI extends JFrame{
         Image bgr, fieldImage;
         public Background() {
             name = "background";
-            setBackground(colorBGR);
+            setBackground(Color.RED);//colorBGR);
             try {
                 bgr = ImageIO.read(new File("assets/lab.png"));
                 wWIDTH = bgr.getWidth(null);
@@ -122,13 +129,16 @@ public class GUI extends JFrame{
             update();
             fieldImage = imgMap.get(f);
             img.getGraphics().drawImage(fieldImage,0,0,null);
+            repaint();
         }
+        @Override
         public void update() {
             img.getGraphics().drawImage(bgr,0,0,null);
         }
         @Override
         protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                update();
                 g.drawImage(img, 0, 0, this);
                 this.repaint();
         }
@@ -140,6 +150,7 @@ public class GUI extends JFrame{
             gr.setFont(font1);
             gr.drawImage(bgr,0,0,null);
             gr.drawImage(portrait,8,8,null);
+
         }
         public void update(int ap, Materials mat, ArrayList<StatusEffect> statuses) {
             update();
@@ -204,6 +215,7 @@ public class GUI extends JFrame{
                     drawn[7] = true;
                 }
             }
+            repaint();
         }
         public AttributesPanel() {
             name = "attributesPanel";
@@ -272,6 +284,7 @@ public class GUI extends JFrame{
                     i++;
                 }
             }
+            repaint();
         }
         @Override
         protected void paintComponent(Graphics g) {
@@ -332,18 +345,19 @@ public class GUI extends JFrame{
             int yOffset = 60;
             ArrayList<Agent> getAgentInventory = v.GetAgentInventory();
             for (int i = 0; i < getAgentInventory.size(); i++) {
-                gInv.drawString(getAgentInventory.get(i).GetName(), xOffset, yOffset + i * 10);
+                //gInv.drawString(getAgentInventory.get(i).GetName(), xOffset, yOffset + i * 10);
             }
 
             ArrayList<Agent> getRecipes = v.GetRecipes();
             for (int i = 0; i < getRecipes.size(); i++) {
-                gRec.drawString(getRecipes.get(i).GetName(), xOffset, yOffset + i * 10);
+                //gRec.drawString(getRecipes.get(i).GetName(), xOffset, yOffset + i * 10);
             }
 
             ArrayList<Character> getCharacters = v.GetField().GetCharacters();
             for (int i = 0; i < getCharacters.size(); i++) {
-                gField.drawString(((Virologist) getCharacters.get(i)).GetName(), xOffset, yOffset + i * 10);
+                //gField.drawString(((Virologist) getCharacters.get(i)).GetName(), xOffset, yOffset + i * 10);
             }
+            repaint();
         }
         @Override
         protected void paintComponent(Graphics g) {
@@ -408,7 +422,7 @@ public class GUI extends JFrame{
             ArrayList<Agent> agentRecipes = virologist.GetRecipes();
             ArrayList<Equipment> equipmentInventory = virologist.GetEquipment();
             ArrayList<Equipment> targetInventory = new ArrayList<>();
-            if(targetID != -1)
+            if(targetID > 0 || targetID < characters.size())
                 targetInventory = ((Virologist)virologist.GetField().GetCharacters().get(targetID)).GetEquipment();
 
             int c = 0;
@@ -519,6 +533,7 @@ public class GUI extends JFrame{
                 bearLoc.put(bear, fieldCentres.get(bear.GetField()));
             }
             update();
+            repaint();
         }
         @Override
         protected void paintComponent(Graphics g) {
