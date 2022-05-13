@@ -28,6 +28,9 @@ public class GameController implements IViewable {
 	/** A játékban szereplő felszereléseket tárolja.*/
 	private ArrayList<Equipment> equipment = new ArrayList<>();
 
+	public static HashMap<Object, String> objectIDs = new HashMap<>();
+	public static HashMap<String, Object> objectIDsInv = new HashMap<>();
+
 	private static GameController instance=null;
 	public static GameController getInstance(){
 		if (instance == null) instance = new GameController();
@@ -121,6 +124,7 @@ public class GameController implements IViewable {
 	public void StartGame(ArrayDeque<Character> c, ArrayList<Agent> a, ArrayList<Equipment> e) {
 		gameRunning=true;
 		gameMap = new GameMap(c, a, e);
+		LoadMap("map.txt");
 		chQueue.addAll(c);
 		agents.addAll(a);
 		equipment.addAll(e);
@@ -186,5 +190,52 @@ public class GameController implements IViewable {
 
 	public void RemoveView(View view) {
 		views.remove(view);
+	}
+
+	public GameMap GetGameMap() {
+		return gameMap;
+	}
+
+	public void LoadMap(String filename){
+		Scanner sc=new Scanner(filename);
+		ArrayList<Field> temp = new ArrayList<>();
+		String line=sc.nextLine();
+			String[] proc = line.split(" ");
+			for (int i = 1; i <= (proc.length - 1); i += 2) {
+				Field f = null;
+				switch (proc[i]) {
+					case "city":
+						f = new City();
+						break;
+					case "lab":
+						f = new Lab();
+						break;
+					case "shelter":
+						f = new Shelter();
+						break;
+					case "storage":
+						f = new Storage();
+						break;
+				}
+				String id = proc[i + 1];
+				if (proc[i + 1].endsWith(";"))
+					id = proc[i + 1].substring(0, proc[i + 1].length() - 1);
+				objectIDs.put(f, id);
+				objectIDsInv.put(id, f);
+				temp.add(f);
+				gameMap.GetFields().add(f);
+			}
+
+		if (temp.size() > 1) {
+			for (Field f : temp) {
+				System.out.println(objectIDs.get(f) + ": ");
+				String[] neighbors = sc.nextLine().split(" ");
+				ArrayList<Field> neighborsArr = new ArrayList<>();
+				for (String id : neighbors) {
+					neighborsArr.add((Field) objectIDsInv.get(id));
+				}
+				f.SetNeighbors(neighborsArr);
+			}
+		}
 	}
 }

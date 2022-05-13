@@ -8,9 +8,14 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.Character;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class GUI extends JFrame{
     private GameController gc = GameController.getInstance();
@@ -78,6 +83,7 @@ public class GUI extends JFrame{
         protected Image img = new BufferedImage(wWIDTH, wHEIGHT, BufferedImage.TYPE_INT_ARGB);
         public void init() {setPreferredSize(imgDim.get(name));
         }
+        public abstract void update();
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             img.getGraphics().clearRect(0, 0, img.getWidth(null), img.getHeight(null));
@@ -100,9 +106,10 @@ public class GUI extends JFrame{
             }
             init();
         }
-        public void Update(Field f) {
+        public void update(Field f) {
             fieldImage = imgMap.get(f);
         }
+        public void update() {}
         @Override
         protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -113,19 +120,77 @@ public class GUI extends JFrame{
     }
     public class AttributesPanel extends InterfaceElement {
         BufferedImage bgr, portrait, status;
-        StatusEffect active = new StatusEffect();
-        int amino = 10, nucleo = 5, ap = 3;
-        public void Update(int ap, Materials mat) {
+        public void update() {
+            Graphics gr = img.getGraphics();
+            gr.setFont(font1);
+            gr.drawImage(bgr,0,0,null);
+            gr.drawImage(portrait,8,8,null);
+        }
+        public void update(int ap, Materials mat, ArrayList<StatusEffect> statuses) {
+            update();
+            Graphics gr = img.getGraphics();
+            String aminoStr = String.format("Aminoacid count:  %d", mat.GetAminoAcid());
+            String nucleoStr = String.format("Nucleotide count: %d", mat.GetNucleotide());
+            String apStr = String.format("Action Points:    %d", ap);
+            gr.drawString(aminoStr, 5,230);
+            gr.drawString(nucleoStr, 5,246);
+            gr.drawString(apStr, 5,262);
+            int i = 0;
+            int xOffs = 8;
+            int yOffs = 8+128+32;
+            Boolean[] drawn = new Boolean[8];
+            for(StatusEffect s: statuses) {
+                if (s.GetParalyzed() && drawn[0] != true) {
+                    BufferedImage image = status.getSubimage(0, 0, 32, 32);
+                    gr.drawImage(image, xOffs + i % 6 * 32, yOffs - i / 6 * 32, 32, 32, null);
+                    i++;
+                    drawn[0] = true;
+                }
+                if (s.GetDead() && drawn[1] != true) {
+                    BufferedImage image = status.getSubimage(32, 0, 32, 32);
+                    gr.drawImage(image, xOffs + i % 6 * 32, yOffs - i / 6 * 32, 32, 32, null);
+                    i++;
+                    drawn[1] = true;
+                }
+                if (s.GetChorea() && drawn[2] != true) {
+                    BufferedImage image = status.getSubimage(64, 0, 32, 32);
+                    gr.drawImage(image, xOffs + i % 6 * 32, yOffs - i / 6 * 32, 32, 32, null);
+                    i++;
+                    drawn[2] = true;
+                }
+                if (s.GetReflect() && drawn[3] != true) {
+                    BufferedImage image = status.getSubimage(96, 0, 32, 32);
+                    gr.drawImage(image, xOffs + i % 6 * 32, yOffs - i / 6 * 32, 32, 32, null);
+                    i++;
+                    drawn[3] = true;
+                }
+                if (s.GetBagsize() > 0 && drawn[4] != true) {
+                    BufferedImage image = status.getSubimage(0, 32, 32, 32);
+                    gr.drawImage(image, xOffs + i % 6 * 32, yOffs - i / 6 * 32, 32, 32, null);
+                    i++;
+                    drawn[4] = true;
+                }
+                if (s.GetAmnesia() && drawn[5] != true) {
+                    BufferedImage image = status.getSubimage(32, 32, 32, 32);
+                    gr.drawImage(image, xOffs + i % 6 * 32, yOffs - i / 6 * 32, 32, 32, null);
+                    i++;
+                    drawn[5] = true;
+                }
+                if (s.GetImmunity() > 0 && drawn[6] != true) {
+                    BufferedImage image = status.getSubimage(64, 32, 32, 32);
+                    gr.drawImage(image, xOffs + i % 6 * 32, yOffs - i / 6 * 32, 32, 32, null);
+                    i++;
+                    drawn[6] = true;
+                }
+                if (s.GetBear() && drawn[7] != true) {
+                    BufferedImage image = status.getSubimage(96, 32, 32, 32);
+                    gr.drawImage(image, xOffs + i % 6 * 32, yOffs - i / 6 * 32, 32, 32, null);
+                    i++;
+                    drawn[7] = true;
+                }
+            }
         }
         public AttributesPanel() {
-            active.SetBear(true);
-            active.SetParalyzed(true);
-            active.SetAmnesia(true);
-            active.SetChorea(true);
-            active.SetBagsize(10);
-            active.SetDead(true);
-            active.SetImmunity(1.0f);
-            active.SetReflect(true);
             name = "attributesPanel";
             setOpaque(false);
             try {
@@ -139,77 +204,23 @@ public class GUI extends JFrame{
                 e.printStackTrace();
             }
             init();
+            update();
         }
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            Graphics gr = img.getGraphics();
-            gr.setFont(font1);
-            gr.drawImage(bgr,0,0,null);
-            gr.drawImage(portrait,8,8,null);
-            String aminoStr = String.format("Aminoacid count:  %d", amino);
-            String nucleoStr = String.format("Nucleotide count: %d", nucleo);
-            String apStr = String.format("Action Points:    %d", ap);
-            gr.drawString(aminoStr, 5,230);
-            gr.drawString(nucleoStr, 5,246);
-            gr.drawString(apStr, 5,262);
-            int i = 0;
-            int xOffs = 8;
-            int yOffs = 8+128+32;
-            if(active.GetParalyzed()) {
-                BufferedImage image = ((BufferedImage) status).getSubimage(0,0,32,32);
-                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
-                i++;
-            }
-            if(active.GetDead()) {
-                BufferedImage image = ((BufferedImage) status).getSubimage(32,0,32,32);
-                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
-                i++;
-            }
-            if(active.GetChorea()) {
-                BufferedImage image = ((BufferedImage) status).getSubimage(64,0,32,32);
-                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
-                i++;
-            }
-            if(active.GetReflect()) {
-                BufferedImage image = ((BufferedImage) status).getSubimage(96,0,32,32);
-                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
-                i++;
-            }
-            if(active.GetBagsize()>0) {
-                BufferedImage image = ((BufferedImage) status).getSubimage(0,32,32,32);
-                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
-                i++;
-            }
-            if(active.GetAmnesia()) {
-                BufferedImage image = ((BufferedImage) status).getSubimage(32,32,32,32);
-                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
-                i++;
-            }
-            if(active.GetImmunity()>0) {
-                BufferedImage image = ((BufferedImage) status).getSubimage(64,32,32,32);
-                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
-                i++;
-            }
-            if(active.GetBear()) {
-                BufferedImage image = ((BufferedImage) status).getSubimage(96,32,32,32);
-                gr.drawImage(image,xOffs+i%6*32,yOffs-i/6*32,32,32, null);
-                i++;
-            }
             g.drawImage(img, 0, 0, this);
             this.repaint();
         }
     }
     public class EquipmentPanel extends InterfaceElement {
-        Image bgr, e1, e2, e3;
+        Image bgr; BufferedImage eqImg;
         public EquipmentPanel() {
             name = "equipmentPanel";
             setOpaque(false);
             try {
                 bgr = ImageIO.read(new File("assets/eqbgr.png"));
-                e1 = ImageIO.read(new File("assets/axe_16.png")).getScaledInstance(64, 64, Image.SCALE_DEFAULT);
-                e2 = ImageIO.read(new File("assets/cloak_16.png")).getScaledInstance(64, 64, Image.SCALE_DEFAULT);
-                e3 = ImageIO.read(new File("assets/glove_16.png")).getScaledInstance(64, 64, Image.SCALE_DEFAULT);
+                eqImg = ImageIO.read(new File("assets/equipments.png"));
                 img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 imgDim.put(name,new Dimension(img.getWidth(null),img.getHeight(null)));
             }
@@ -218,23 +229,48 @@ public class GUI extends JFrame{
             }
             init();
         }
-        public void Update(ArrayList<Equipment> eq) {}
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
+        public void update() {
             Graphics gr = img.getGraphics();
             gr.setFont(font1);
             gr.drawImage(bgr,0,0,null);
-            gr.drawImage(e1,15,350-3*95-10-16,null);
-            gr.drawImage(e2,15,350-2*95-10-8,null);
-            gr.drawImage(e3,15,350-95-10,null);
             gr.drawString("Equipment:", 8, 25);
+        }
+        public void Update(ArrayList<Equipment> eq) {
+            update();
+            Graphics gr = img.getGraphics();
+            int i = 0;
+            int xOffs = 15;
+            int yOffs = 65;
+            for(Equipment e: eq) { // végigmegy eq-n és kirajzolja mindegyiket eltologatva attól függően hogy hanyadjára rajzol (i)
+                if (e.GetName() == "axe") {
+                    BufferedImage image = eqImg.getSubimage(0, 0, 16, 16);
+                    gr.drawImage(image,xOffs,yOffs+i*98,null);
+                    i++;
+                }
+                if (e.GetName() == "glove") {
+                    BufferedImage image = eqImg.getSubimage(16, 0, 16, 16);
+                    gr.drawImage(image,xOffs,yOffs+i*98,null);
+                    i++;
+                }
+                if (e.GetName() == "cloak") {
+                    BufferedImage image = eqImg.getSubimage(16, 0, 16, 16);
+                    gr.drawImage(image,xOffs,yOffs+i*98,null);
+                    i++;
+                }
+            }
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
             g.drawImage(img, 0, 0, this);
             this.repaint();
         }
     }
     public class MultiUsePanel extends InterfaceElement {
         Image bgr;
+        BufferedImage inv;
+        BufferedImage rec;
+        BufferedImage field;
         int state = 0;
         public MultiUsePanel() {
             name = "multiUsePanel";
@@ -249,31 +285,64 @@ public class GUI extends JFrame{
             }
             init();
         }
+        public void update() {
+            Graphics gInv = inv.getGraphics();
+            Graphics gRec = rec.getGraphics();
+            Graphics gField = field.getGraphics();
+
+            gInv.setFont(font1);
+            gInv.drawImage(bgr,0,0,null);
+            gInv.drawString("<-Q-              -E->", 1,20);
+            gInv.drawString("Owned Agents", 45,20);
+
+            gRec.setFont(font1);
+            gRec.drawImage(bgr,0,0,null);
+            gRec.drawString("<-Q-              -E->", 1,20);
+            gRec.drawString("Known Agents", 45,20);
+
+            gField.setFont(font1);
+            gField.drawImage(bgr,0,0,null);
+            gField.drawString("<-Q-              -E->", 1,20);
+            gField.drawString("Virologists on field", 45,40);
+        }
+        public void update(Virologist v) {
+            update();
+            Graphics gInv = inv.getGraphics();
+            Graphics gRec = rec.getGraphics();
+            Graphics gField = field.getGraphics();
+
+            int xOffset = 5;
+            int yOffset = 60;
+            int i = 0;
+            for(Agent a: v.GetAgentInventory()) {
+                gInv.drawString(a.GetName(), xOffset, yOffset+i*10);
+            }
+            i = 0;
+            for(Agent a: v.GetRecipes()) {
+                gRec.drawString(a.GetName(), xOffset, yOffset+i*10);
+            }
+            i = 0;
+            for(koporscho.Character vir: v.GetField().GetCharacters()) {
+                gField.drawString(((Virologist)vir).GetName(), xOffset, yOffset+i*10);
+            }
+        }
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            Graphics gr = img.getGraphics();
-            gr.setFont(font1);
-            gr.drawImage(bgr,0,0,null);
-            gr.drawString("<-Q-              -E->", 1,20);
-            switch (state) {
-                case 0:
-                    gr.drawString("Known Agents", 45,20);
-                    break;
-                case 1:
-                    gr.drawString("Owned Agents", 5,40);
-                    break;
-                case 2:
-                    gr.drawString("Virologists on field", 5,40);
-                    break;
-                    //... TODO
-            }
             g.drawImage(img, 0, 0, this);
+            Graphics g = img.getGraphics();
+            switch(state) {
+                case 0: g.drawImage(inv);break;
+                case 1: break;
+                case 2: break;
+                
+            }
             this.repaint();
         }
     }
     public class Console extends InterfaceElement {
         Image bgr;
+        static int targetID;
         public Console() {
             name = "console";
             setOpaque(false);
@@ -294,10 +363,101 @@ public class GUI extends JFrame{
             gr.setFont(font1);
             gr.drawImage(bgr,0,0,null);
             gr.drawString("This is the Console :)))", 95,60);
+            renderOptions(gr);
 
             g.drawImage(img, 0, 0, this);
             this.repaint();
         }
+        public void update() {}
+        // Console element test
+
+        void renderOptions(Graphics g){
+            int xBase = 15, yBase = 5;
+            int xPadding = 5, yPadding = 1;
+
+            Virologist virologist = GameController.getInstance().GetCurrentVirologist();
+
+            ArrayList<Field> fields = virologist.GetField().GetNeighbors();
+            ArrayList<Field> allFields = GameController.getInstance().GetGameMap().GetFields();
+            ArrayList<koporscho.Character> characters = virologist.GetField().GetCharacters();
+            ArrayList<Agent> agentInventory = virologist.GetAgentInventory();
+            ArrayList<Agent> agentRecipes = virologist.GetRecipes();
+            ArrayList<Equipment> equipmentInventory=virologist.GetEquipment();
+            ArrayList<Equipment> targetInventory = ((Virologist)virologist.GetField().GetCharacters().get(targetID-1)).GetEquipment();
+
+            int c = 0;
+            switch (state) {
+                case DEFAULT:
+                    g.drawString("1. Move", xBase + xPadding, yBase + yPadding * c++);
+                    g.drawString("2. Interact", xBase + xPadding, yBase + yPadding * c++);
+                    g.drawString("3. Apply Agent", xBase + xPadding, yBase + yPadding * c++);
+                    g.drawString("4. Craft Agent", xBase + xPadding, yBase + yPadding * c++);
+                    g.drawString("5. Drop Equipment", xBase + xPadding, yBase + yPadding * c++);
+                    g.drawString("6. Chop", xBase + xPadding, yBase + yPadding * c++);
+                    g.drawString("7. Steal Equipment", xBase + xPadding, yBase + yPadding * c);
+                    break;
+                case MOVE:
+                    g.drawString("0. Cancel", xBase + xPadding, yBase + yPadding * c++);
+
+                    for(int i=0; i < fields.size();i++){
+                        g.drawString((i+1) + ". field " + allFields.indexOf(fields.get(i))+1, xBase + xPadding, yBase + yPadding * c++);
+                    }
+                    break;
+                case APPLY_AGENT_STEP1, CHOP, STEAL_EQUIPMENT_STEP1:
+                    g.drawString("0. Cancel", xBase + xPadding, yBase + yPadding * c++);
+                    if(characters.size()==0){
+                        g.drawString("No characters found.", xBase + xPadding, yBase + yPadding * c++);
+                        break;
+                    }
+                    for(int i=0; i < characters.size();i++){
+                        String name = ((Virologist)characters.get(i)).GetName();
+                        name = name.isEmpty() ? "<UNIDENTIFIED>" : name;
+                        g.drawString((i+1) + ". " + name, xBase + xPadding, yBase + yPadding * c++);
+                    }
+                    break;
+                case APPLY_AGENT_STEP2:
+                    g.drawString("0. Cancel", xBase + xPadding, yBase + yPadding * c++);
+                    for(int i=0; i < agentInventory.size();i++){
+                        String name = agentInventory.get(i).GetName();
+                        name = name.isEmpty() ? "<UNIDENTIFIED>" : name;
+                        g.drawString((i+1) + ". " + name, xBase + xPadding, yBase + yPadding * c++);
+                    }
+                    break;
+                case CRAFT_AGENT:
+                    g.drawString("0. Cancel", xBase + xPadding, yBase + yPadding * c++);
+                    for(int i=0; i < agentRecipes.size();i++){
+                        String name = agentRecipes.get(i).GetName();
+                        name = name.isEmpty() ? "<UNIDENTIFIED>" : name;
+                        g.drawString((i+1) + ". " + name, xBase + xPadding, yBase + yPadding * c++);
+                    }
+                    break;
+                case DROP_EQUIPMENT:
+                    g.drawString("0. Cancel", xBase + xPadding, yBase + yPadding * c++);
+                    if(characters.size()==0){
+                        g.drawString("Equipment inventory is empty.", xBase + xPadding, yBase + yPadding * c++);
+                        break;
+                    }
+                    for(int i=0; i<equipmentInventory.size(); i++){
+                        String name= equipmentInventory.get(i).GetName();
+                        name = name.isEmpty() ? "<UNIDENTIFIED>" : name;
+                        g.drawString((i+1) + ". " + name, xBase + xPadding, yBase + yPadding * c++);
+                    }
+                    break;
+                case STEAL_EQUIPMENT_STEP2:
+                    g.drawString("0. Cancel", xBase + xPadding, yBase + yPadding * c++);
+                    if(targetInventory.size()==0){
+                        g.drawString("Target inventory is empty.", xBase + xPadding, yBase + yPadding * c++);
+                        break;
+                    }
+                    for(int i=0; i < targetInventory.size(); i++){
+                        String name= targetInventory.get(i).GetName();
+                        name = name.isEmpty() ? "<UNIDENTIFIED>" : name;
+                        g.drawString((i+1) + ". " + name, xBase + xPadding, yBase + yPadding * c++);
+                    }
+                    break;
+            }
+        }
+
     }
     public class Map extends InterfaceElement {
         ArrayList<Point> virLoc = new ArrayList<>();
@@ -318,6 +478,7 @@ public class GUI extends JFrame{
             }
             init();
         }
+        public void update() {}
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -337,8 +498,7 @@ public class GUI extends JFrame{
     }
     private int targetStep1 = 0;
     private HashMap<IViewable, Image> imgMap = new HashMap<>();
-    private HashMap<String, Image> equipMap = new HashMap<>();
-    private HashMap<Field, Point> fieldCentres = new HashMap<>();
+    private HashMap<Field, Point> fieldCentres = new HashMap<>(); // fájlból id -> objectIds.get fieldet - koordináta
 
     public class KL implements KeyListener {
         @Override
@@ -468,11 +628,27 @@ public class GUI extends JFrame{
                 }
                 default: break;
             }
+            Console.targetID = targetID;
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
 
+        }
+        //  private HashMap<Field, Point> fieldCentres = new HashMap<>(); // fájlból id -> objectIds.get fieldet - koordináta
+
+        private void fieldCentersFill(File name){
+            try 
+                Scanner sc = new Scanner(name);
+                ArrayList<String> parts;
+
+                while(sc.hasNextLine()){
+                    parts = (ArrayList<String>) Arrays.stream(sc.nextLine().split(",")).toList();
+                    fieldCentres.put(null, new Point(Integer.parseInt(parts.get(1)),Integer.parseInt(parts.get(2)) )
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 

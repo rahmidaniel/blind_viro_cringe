@@ -74,25 +74,25 @@ public abstract class Field {
 	 * A Field osztály logger fügvénye, mely az adott mező tulajdonságait írja ki a standard kimentre és fájlba.
 	 * @throws java.io.IOException
 	 */
-	public void log() throws java.io.IOException{
-		System.out.println(Prototype.objectIDs.get(this)+":");
+	public void log() throws java.io.IOException {
+		System.out.println(Prototype.objectIDs.get(this) + ":");
 		System.out.print("\tneighbors: ");
 		StringJoiner str = new StringJoiner(", ");
-		for(Field f: neighbors) str.add(Prototype.objectIDs.get(f));
-		System.out.println(str.length()==0?"-":str);
+		for (Field f : neighbors) str.add(Prototype.objectIDs.get(f));
+		System.out.println(str.length() == 0 ? "-" : str);
 		System.out.print("\tcharacters: ");
 		str = new StringJoiner(", ");
-		for(Character c: characters) str.add(Prototype.objectIDs.get(c));
-		System.out.println(str.length()==0?"-":str);
+		for (Character c : characters) str.add(Prototype.objectIDs.get(c));
+		System.out.println(str.length() == 0 ? "-" : str);
 
-		Prototype.writer.write(Prototype.objectIDs.get(this)+":"+"\n");
+		Prototype.writer.write(Prototype.objectIDs.get(this) + ":" + "\n");
 		Prototype.writer.write("\tneighbors: ");
 		str = new StringJoiner(", ");
-		for(Field f: neighbors) str.add(Prototype.objectIDs.get(f));
-		Prototype.writer.write((str.length()==0?"-":str)+"\n");
+		for (Field f : neighbors) str.add(Prototype.objectIDs.get(f));
+		Prototype.writer.write((str.length() == 0 ? "-" : str) + "\n");
 		Prototype.writer.write("\tcharacters: ");
 		str = new StringJoiner(", ");
-		for(Character c: characters) str.add(Prototype.objectIDs.get(c));
-		Prototype.writer.write((str.length()==0?"-":str)+"\n");
+		for (Character c : characters) str.add(Prototype.objectIDs.get(c));
+		Prototype.writer.write((str.length() == 0 ? "-" : str) + "\n");
 	}
 }

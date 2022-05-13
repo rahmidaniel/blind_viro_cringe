@@ -124,4 +124,8 @@ public class Agent {
 		Prototype.writer.write("\t\taminoacid: " + recipe.GetAminoAcid()+"\n");
 		Prototype.writer.write("\teffect: " + Prototype.objectIDs.get(effect)+"\n");
 	}
+
+	public String GetName() {
+		return name;
+	}
 }

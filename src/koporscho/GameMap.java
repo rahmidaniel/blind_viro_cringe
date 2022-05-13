@@ -2,6 +2,7 @@ package koporscho;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.ObjectInputStream;
 import java.util.*;
 //
 //
@@ -120,5 +121,9 @@ public class GameMap {
 			exc.printStackTrace();
 		}
 
+	}
+
+	public ArrayList<Field> GetFields() {
+		return fields;
 	}
 }
