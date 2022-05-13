@@ -452,7 +452,6 @@ public class Prototype {
                 case "-e":((Equipment)objectIDsInv.get(proc[2])).log(); break;
                 case "-s":((StatusEffect)objectIDsInv.get(proc[2])).log(); break;
             }
-
         }
     }
 

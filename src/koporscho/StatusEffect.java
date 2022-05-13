@@ -94,8 +94,6 @@ public class StatusEffect {
 				Random random = new Random();
 				i = random.nextInt(neighbours.size() - 1);
 			}
-			if(!Prototype.random)
-				i=0;
 
 			target.Move(neighbours.get(i));
 		}

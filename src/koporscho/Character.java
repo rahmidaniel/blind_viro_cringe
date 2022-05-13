@@ -66,8 +66,7 @@ public abstract class Character {
 			float immunity = 1-infectionChance;
 			float diceRoll;
 
-			if(!Prototype.random) diceRoll = Prototype.diceRoll;
-			else diceRoll = (float) Math.random();
+			diceRoll = (float) Math.random();
 
 			if (diceRoll > immunity) {
 				StatusEffect e = new StatusEffect(agent.GetEffect());

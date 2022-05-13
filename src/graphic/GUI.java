@@ -45,7 +45,14 @@ public class GUI extends JFrame{
     private GUI() {
         try {
             font1 = Font.createFont(Font.TRUETYPE_FONT, new File("assets/VCR_OSD_MONO_1.001.ttf")).deriveFont(16f); //VCR_OSD_MONO_1.001.ttf
-            font2 = Font.createFont(Font.TRUETYPE_FONT, new File("assets/3Dventure.ttf")).deriveFont(16f); //VCR_OSD_MONO_1.001.ttf
+            font2 = Font.createFont(Font.TRUETYPE_FONT, new File("assets/3Dventure.ttf")).deriveFont(32f); //VCR_OSD_MONO_1.001.ttf
+            int i = 1;
+            for (Character c: gc.GetChQueue()) {
+                String fname = String.format("assets/virologist%d.png",i++);
+                System.out.println(fname);
+                BufferedImage img = ImageIO.read(new File(fname));
+                imgMap.put((IViewable) c, img);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,14 +118,17 @@ public class GUI extends JFrame{
     }
     private ArrayList<InterfaceElement> interfaceElements = new ArrayList<>();
     public class Background extends InterfaceElement{
-        Image bgr, fieldImage;
+        Image lab, storage, shelter, city, fieldImage;
         public Background() {
             name = "background";
             setBackground(Color.RED);//colorBGR);
             try {
-                bgr = ImageIO.read(new File("assets/lab.png"));
-                wWIDTH = bgr.getWidth(null);
-                img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                lab = ImageIO.read(new File("assets/lab.png"));
+                shelter = ImageIO.read(new File("assets/shelter.png"));
+                storage = ImageIO.read(new File("assets/storage.png"));
+                city = ImageIO.read(new File("assets/city.png"));
+                wWIDTH = lab.getWidth(null);
+                img = new BufferedImage(lab.getWidth(null), lab.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 imgDim.put(name,new Dimension(img.getWidth(null),img.getHeight(null)));
             }
             catch (Exception e) {
@@ -128,14 +138,27 @@ public class GUI extends JFrame{
         }
         public void update(Field f) {
             update();
-            fieldImage = imgMap.get(f);
-            img.getGraphics().drawImage(fieldImage,0,0,null);
+            if(gc.objectIDs.get(f).contains("City")){
+                fieldImage = city;
+            }
+            if(gc.objectIDs.get(f).contains("Shelter")){
+                fieldImage = shelter;
+            }
+            if(gc.objectIDs.get(f).contains("Lab")){
+                fieldImage = lab;
+            }
+            if(gc.objectIDs.get(f).contains("Storage")){
+                fieldImage = storage;
+            }
+
+            if(fieldImage!=null) img.getGraphics().drawImage(fieldImage,0,0,null);
+
             repaint();
-        }
-        @Override
-        public void update() {
+            }
+            @Override
+            public void update() {
             super.update();
-            img.getGraphics().drawImage(bgr,0,0,null);
+            //img.getGraphics().drawImage(bgr,0,0,null);
         }
         @Override
         protected void paintComponent(Graphics g) {
@@ -145,14 +168,15 @@ public class GUI extends JFrame{
         }
     }
     public class AttributesPanel extends InterfaceElement {
-        BufferedImage bgr, portrait, status;
+        BufferedImage bgr, status, portrait;
         public void update() {
             super.update();
             Graphics gr = img.getGraphics();
             gr.drawImage(bgr,0,0,null);
             gr.drawImage(portrait,8,8,null);
         }
-        public void update(int ap, Materials currMat, Materials maxMat, ArrayList<StatusEffect> statuses) {
+        public void update(int ap, Materials currMat, Materials maxMat, ArrayList<StatusEffect> statuses, Virologist v) {
+            portrait = (BufferedImage) imgMap.get((IViewable) v);
             update();
             Graphics gr = img.getGraphics();
             gr.setFont(font1);
@@ -223,7 +247,6 @@ public class GUI extends JFrame{
             setOpaque(false);
             try {
                 bgr = ImageIO.read(new File("assets/attrbgr.png"));
-                portrait = ImageIO.read(new File("assets/portrait.png"));
                 status = ImageIO.read(new File("assets/statuseffects.png"));
                 img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 imgDim.put(name,new Dimension(img.getWidth(null),img.getHeight(null)));
@@ -306,7 +329,7 @@ public class GUI extends JFrame{
         }
     }
     public class MultiUsePanel extends InterfaceElement {
-        Image bgr;
+        Image bgr, slot;
         BufferedImage inv ;
         BufferedImage rec;
         BufferedImage field;
@@ -315,7 +338,8 @@ public class GUI extends JFrame{
             name = "multiUsePanel";
             setOpaque(false);
             try {
-                bgr = ImageIO.read(new File("assets/multibgr.png"));
+                bgr = ImageIO.read(new File("assets/invPanel_64x128.png"));
+                slot = ImageIO.read(new File("assets/slot.png"));
                 img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 inv = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 rec = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
@@ -329,25 +353,33 @@ public class GUI extends JFrame{
         }
         public void update() {
             super.update();
+
             Graphics gInv = inv.getGraphics();
             Graphics gRec = rec.getGraphics();
             Graphics gField = field.getGraphics();
 
-            gInv.setFont(font1);
-            gRec.setFont(font1);
-            gField.setFont(font1);
+            Font big = font1.deriveFont(22.0f);
 
+            gInv.setFont(big);
+            gRec.setFont(big);
+            gField.setFont(big);
+            int xPadding = 4, yPadding = 2;
+            int xText = 35, yText = 20;
             gInv.drawImage(bgr,0,0,null);
-            gInv.drawString("<-Q-              -E->", 1,20);
-            gInv.drawString("Inventory", 58,20);
+            //gInv.drawString("<-Q-              -E->", 1,20);
+            gInv.drawString("Q", xPadding * 2, yPadding + yText);
+            gInv.drawString("E", this.getWidth() - xPadding * 4, yPadding + yText);
+            gInv.drawString("Inventory", xText, yText);
 
             gRec.drawImage(bgr,0,0,null);
-            gRec.drawString("<-Q-              -E->", 1,20);
-            gRec.drawString("Recipes", 58,20);
+            gRec.drawString("Q", xPadding * 2, yPadding + yText);
+            gRec.drawString("E", this.getWidth() - xPadding * 4, yPadding + yText);
+            gRec.drawString("Recipes", xText,yText);
 
             gField.drawImage(bgr,0,0,null);
-            gField.drawString("<-Q-              -E->", 1,20);
-            gField.drawString("Targets", 58,20);
+            gField.drawString("Q", xPadding * 2, yPadding + yText);
+            gField.drawString("E", this.getWidth() - xPadding * 4, yPadding + yText);
+            gField.drawString("Targets", xText, yText);
         }
         public void update(Virologist v) {
             update();
@@ -355,21 +387,29 @@ public class GUI extends JFrame{
             Graphics gRec = rec.getGraphics();
             Graphics gField = field.getGraphics();
 
+            Font big = font1.deriveFont(22.0f);
+            gInv.setFont(big);
+            gRec.setFont(big);
+            gField.setFont(big);
             int xOffset = 5;
             int yOffset = 60;
+            int yPadding = 30;
             ArrayList<Agent> getAgentInventory = v.GetAgentInventory();
             for (int i = 0; i < getAgentInventory.size(); i++) {
-                gInv.drawString(getAgentInventory.get(i).GetName(), xOffset, yOffset + i * 10);
+                gInv.drawImage(slot,xOffset - 2, yOffset + i * yPadding - yPadding/2,null);
+                gInv.drawString(getAgentInventory.get(i).GetName(), xOffset, yOffset + i * yPadding);
             }
 
             ArrayList<Agent> getRecipes = v.GetRecipes();
             for (int i = 0; i < getRecipes.size(); i++) {
-                gRec.drawString(getRecipes.get(i).GetName(), xOffset, yOffset + i * 10);
+                gRec.drawImage(slot,xOffset - 2, yOffset + i * yPadding - yPadding/2,null);
+                gRec.drawString(getRecipes.get(i).GetName(), xOffset, yOffset + i * yPadding);
             }
 
             ArrayList<Character> getCharacters = v.GetField().GetCharacters();
             for (int i = 0; i < getCharacters.size(); i++) {
-                gField.drawString(((Virologist) getCharacters.get(i)).GetName(), xOffset, yOffset + i * 10);
+                gField.drawImage(slot,xOffset - 2, yOffset + i * yPadding - yPadding/2,null);
+                gField.drawString(((Virologist) getCharacters.get(i)).GetName(), xOffset, yOffset + i * yPadding);
             }
             repaint();
         }
@@ -521,10 +561,11 @@ public class GUI extends JFrame{
     }
     public class Map extends InterfaceElement {
         HashMap<Virologist,Point> bearLoc = new HashMap<>();
-        Point curr;
         Image bgr;
+        String fieldID;
         public Map() {
             name = "map";
+            fieldID = "";
             setOpaque(false);
             try {
                 bgr = ImageIO.read(new File("assets/mapbgr.png"));
@@ -542,18 +583,58 @@ public class GUI extends JFrame{
             Graphics gr = img.getGraphics();
             gr.drawImage(bgr,0,0,null);
             gr.setColor(Color.WHITE);
+            gr.setFont(font2);
+            HashMap<Point, Integer> pointOffSets = new HashMap<>();
             for(Point p: bearLoc.values()) {
-                gr.drawString("B", p.x, p.y);
+                int offs = 0;
+                if(pointOffSets.containsKey(p)) {
+                    Integer tmp = pointOffSets.get(p)+1;
+                    pointOffSets.put(p,tmp);
+                    offs = tmp;
+                }
+                else {
+                    pointOffSets.put(p,1);
+                }
+                gr.drawString("B", p.x, p.y+12*offs);
+
             }
-            if(curr != null) {
-                gr.drawString("V", curr.x, curr.y);
+            if(!fieldID.equals("")) {
+                Point p = fieldCentres.get(gc.objectIDsInv.get(fieldID));
+                int offs = 0;
+                if(pointOffSets.containsKey(p)) {
+                    Integer tmp = pointOffSets.get(p)+1;
+                    pointOffSets.put(p,tmp);
+                    offs = tmp;
+                }
+                else {
+                    pointOffSets.put(p,1);
+                }
+                gr.drawString("V", p.x, p.y+12*offs);
+
+                if(state == GUIState.MOVE) {
+                    ArrayList<Field> neighbors = ((Field)gc.objectIDsInv.get(fieldID)).GetNeighbors();
+                    for(int i = 0; i <neighbors.size();i++) {
+                        String str = String.format("%d",i+1);
+                        p = fieldCentres.get(neighbors.get(i));
+                        offs = 0;
+                        if(pointOffSets.containsKey(p)) {
+                            Integer tmp = pointOffSets.get(p)+1;
+                            pointOffSets.put(p,tmp);
+                            offs = tmp;
+                        }
+                        else {
+                            pointOffSets.put(p,1);
+                        }
+                        gr.drawString(str, p.x, p.y+12*offs);
+                    }
+                }
             }
+            repaint();
         }
         public void update(Virologist v, boolean bear) {
             if(!bear) {
-                curr = fieldCentres.get(v.GetField());
+                fieldID = gc.objectIDs.get(v.GetField());
                 update();
-                repaint();
                 return;
             }
             else if(bearLoc.containsKey(v) ) {
@@ -600,6 +681,7 @@ public class GUI extends JFrame{
 
         @Override
         public void keyPressed(KeyEvent e) {
+
             char input = e.getKeyChar();
             if (input == 'e') {
                 muPanel.state++;
@@ -981,6 +1063,7 @@ public class GUI extends JFrame{
                         break;
                 }
             }
+            mapPanel.update();
         }
 
         @Override

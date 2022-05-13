@@ -182,6 +182,7 @@ public class Virologist extends Character implements IViewable {
 				target.AddEffect(e.GetEffect());
 				e.DecreaseDurability();
 				apCurrent--;
+				target.SetApCurrent(0);
 			}
 		}
 		NotifyViews();
@@ -197,7 +198,7 @@ public class Virologist extends Character implements IViewable {
 
 		if (e.GetEffect().GetBagsize()>0){
 			SetMaxMaterials(new Materials(baseBagSize, baseBagSize));
-			System.out.println("anyad");
+
 			if (GetCurrentMaterials().GetNucleotide() > GetMaxMaterials().GetNucleotide())
 				SetMaterials(new Materials(GetMaxMaterials().GetNucleotide(), GetCurrentMaterials().GetAminoAcid()));
 

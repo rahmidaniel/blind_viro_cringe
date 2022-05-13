@@ -8,7 +8,7 @@ public class GameControllerView extends View{
         GameController gc = (GameController) obj;
         Virologist cur = gc.GetCurrentVirologist();
         GUI gui = GUI.getInstance();
-        gui.getAttrPanel().update(cur.GetApCurrent(), cur.GetCurrentMaterials(), cur.GetMaxMaterials(), cur.GetStatusEffects());
+        gui.getAttrPanel().update(cur.GetApCurrent(), cur.GetCurrentMaterials(), cur.GetMaxMaterials(), cur.GetStatusEffects(), cur);
         gui.getBgrPanel().update(cur.GetField());
         gui.getEqPanel().update(cur.GetEquipment());
         gui.getMuPanel().update(cur);
