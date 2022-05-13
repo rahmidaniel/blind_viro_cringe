@@ -21,6 +21,7 @@ public class GameController implements IViewable {
 	/** Az aktuális játék játékterét tárolja.*/
 	private GameMap gameMap;
 	static private GameController gc = new GameController();
+
 	/** A játékban szereplő karaktereket tárolja.*/
 	private ArrayDeque<Character> chQueue = new ArrayDeque<>();
 	/** A játékban szereplő ágenseket tárolja.*/
@@ -47,6 +48,13 @@ public class GameController implements IViewable {
 		return gameRunning;
 	}
 
+	public boolean EndTurn() {
+		if(((Virologist)chQueue.peek()).GetApCurrent() == 0) {
+			NextTurn();
+			return true;
+		}
+		return false;
+	}
 	public boolean Move(int fieldID) {
 		if(fieldID<1 || fieldID > GetCurrentVirologist().GetField().GetNeighbors().size())
 			return false;
@@ -121,13 +129,10 @@ public class GameController implements IViewable {
 	}
 
 	/** Elindítja a játékot a paraméterként megadott karakterekkel, ágensekkel és felszerelésekkel.*/
-	public void StartGame(ArrayDeque<Character> c, ArrayList<Agent> a, ArrayList<Equipment> e) {
+	public void StartGame(String file) {
+		SaveLoader.SetGc(this);
+		SaveLoader.LoadGame(file);
 		gameRunning=true;
-		gameMap = new GameMap(c, a, e);
-		LoadMap("map.txt");
-		chQueue.addAll(c);
-		agents.addAll(a);
-		equipment.addAll(e);
 		NotifyViews();
 	}
 	
@@ -194,6 +199,42 @@ public class GameController implements IViewable {
 
 	public GameMap GetGameMap() {
 		return gameMap;
+	}
+
+	public void SetGameMap(GameMap m) {
+		gameMap=m;
+	}
+
+	public ArrayDeque<Character> GetChQueue() {
+		return chQueue;
+	}
+
+	public void SetChQueue(ArrayDeque<Character> c){
+		chQueue=c;
+	}
+
+	public ArrayList<Agent> GetAgents() {
+		return agents;
+	}
+
+	public void SetAgents(ArrayList<Agent> a){
+		agents=a;
+	}
+
+	public ArrayList<Equipment> GetEquipment() {
+		return equipment;
+	}
+
+	public void SetEquipment(ArrayList<Equipment> e){
+		equipment=e;
+	}
+
+	public void SetObjectIDs(HashMap<Object, String> IDs){
+		objectIDs=IDs;
+	}
+
+	public void SetObjectIDsInv(HashMap<String, Object> IDs){
+		objectIDsInv=IDs;
 	}
 
 	public void LoadMap(String filename){

@@ -22,13 +22,13 @@ public class GameMap {
 	private ArrayList<Field> fields;
 
 	/**
-	 * Létrehozza a pályát a paraméterként kapott karakterekből, ágensekből és felszerelésekből.
+	 * Létrehozza a pályát a paraméterként kapott karakterekből, ágensekből és felszerelésekből.		//TODO
 	 * @param c Karakterek tömbje
 	 * @param a Ágensek tömbje
 	 * @param e Felszerelések tömbje
 	 */
-	public GameMap(ArrayDeque<Character> c, ArrayList<Agent> a, ArrayList<Equipment> e) {
-		this.Generate(c, a, e);
+	public GameMap(ArrayList<Field> f) {
+		fields=f;
 	}
 
 	/**

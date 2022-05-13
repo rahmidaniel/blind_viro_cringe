@@ -314,6 +314,10 @@ public class Virologist extends Character implements IViewable {
 		return apCurrent;
 	}
 
+	public ArrayList<StatusEffect> GetStatusEffects() {
+		return activeEffects;
+	}
+
 	public void SetApCurrent(int val){
 		apCurrent=val;
 		NotifyViews();
