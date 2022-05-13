@@ -419,7 +419,6 @@ public class GUI extends JFrame{
             super.update();
             Graphics gr = img.getGraphics();
             gr.drawImage(bgr,0,0,null);
-            //gr.drawString("This is the Console :)))", 95,60);
         }
         // Console element test
 
@@ -542,16 +541,18 @@ public class GUI extends JFrame{
         public void update() {
             Graphics gr = img.getGraphics();
             gr.drawImage(bgr,0,0,null);
-            gr.setColor(Color.BLACK);
+            gr.setColor(Color.WHITE);
             for(Point p: bearLoc.values()) {
                 gr.drawString("B", p.x, p.y);
             }
-            if(curr != null)
-                gr.drawString("V",curr.x,curr.y);
+            if(curr != null) {
+                gr.drawString("V", curr.x, curr.y);
+            }
         }
         public void update(Virologist v, boolean bear) {
             if(!bear) {
                 curr = fieldCentres.get(v.GetField());
+                update();
                 repaint();
                 return;
             }
@@ -561,6 +562,7 @@ public class GUI extends JFrame{
             else {
                 bearLoc.put(v, fieldCentres.get(v.GetField()));
             }
+            update();
             repaint();
         }
         @Override
@@ -580,10 +582,9 @@ public class GUI extends JFrame{
             Scanner sc = new Scanner(f);
             ArrayList<String> parts = new ArrayList<>();
 
-            while(sc.hasNextLine()){
+            while(sc.hasNextLine()) {
                 parts.addAll(Arrays.stream(sc.nextLine().split(",")).toList());
                 fieldCentres.put((Field)gc.objectIDsInv.get(parts.get(0)), new Point(Integer.parseInt(parts.get(1)),Integer.parseInt(parts.get(2))));
-                System.out.println(parts.get(0)); System.out.println(Integer.parseInt(parts.get(2)));
                 parts = new ArrayList<>();
             }
             sc.close();

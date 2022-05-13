@@ -11,12 +11,12 @@ statusEffect e1 chorea:true duration:3
 statusEffect eq1 immunity:0.5
 statusEffect eq2 reflect:true
 statusEffect eq3 dead:true
-statusEffect eq4 bagsize:10
+statusEffect eq4 bagsize:20
 equipment cloak eq1 -1
 equipment gloves eq2 3
 equipment axe eq3 1
 equipment bag eq4 -1
-materials m1 5 5
+materials m1 50 50
 materials m2 10 10
 materials m3 5 5
 agent aids e1 m1

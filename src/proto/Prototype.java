@@ -441,7 +441,6 @@ public class Prototype {
         String[] proc = cmd.split(" ");
         if(proc.length>1 && Objects.equals(proc[1], "-a")) {
             for (Field f : fields) f.log();
-            for (Virologist v : virologists) v.log();
             for (Agent a : agents) a.log();
             for (Equipment e : equipment) e.log();
             for (StatusEffect s : statusEffects) s.log();
@@ -449,7 +448,6 @@ public class Prototype {
         else{
             switch (proc[1]){
                 case "-f":((Field)objectIDsInv.get(proc[2])).log(); break;
-                case "-v":((Virologist)objectIDsInv.get(proc[2])).log(); break;
                 case "-a":((Agent)objectIDsInv.get(proc[2])).log(); break;
                 case "-e":((Equipment)objectIDsInv.get(proc[2])).log(); break;
                 case "-s":((StatusEffect)objectIDsInv.get(proc[2])).log(); break;

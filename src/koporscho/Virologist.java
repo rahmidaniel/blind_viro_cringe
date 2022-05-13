@@ -16,7 +16,6 @@ import java.util.StringJoiner;
 //
 //
 
-
 /** A Virológust reprezentálja a játéban*/
 public class Virologist extends Character implements IViewable {
 	private int apMax, apCurrent;
@@ -165,6 +164,9 @@ public class Virologist extends Character implements IViewable {
 		StatusEffect ef = e.GetEffect();
 		if(!ef.GetDead())
 			activeEffects.add(e.GetEffect());
+		if(ef.GetBagsize()>0){
+			SetMaxMaterials(new Materials(baseBagSize+ef.GetBagsize(), baseBagSize+ef.GetBagsize()));
+		}
 		NotifyViews();
 	}
 
@@ -172,8 +174,7 @@ public class Virologist extends Character implements IViewable {
 	 * A virológus megtámad a baltával egy másik virológust
 	 * @param target A célpont virológus
 	 */
-	public void Chop(Virologist target)
-	{
+	public void Chop(Virologist target) {
 		for(Equipment e : this.GetEquipment())
 		{
 			if(e.GetEffect().GetDead() && e.GetDurability() > 0)
@@ -193,6 +194,16 @@ public class Virologist extends Character implements IViewable {
 	public void RemoveEquipment(Equipment e) {
 		equipment.remove(e);
 		activeEffects.remove(e.GetEffect());
+
+		if (e.GetEffect().GetBagsize()>0){
+			SetMaxMaterials(new Materials(baseBagSize, baseBagSize));
+			System.out.println("anyad");
+			if (GetCurrentMaterials().GetNucleotide() > GetMaxMaterials().GetNucleotide())
+				SetMaterials(new Materials(GetMaxMaterials().GetNucleotide(), GetCurrentMaterials().GetAminoAcid()));
+
+			if (GetCurrentMaterials().GetAminoAcid() > GetMaxMaterials().GetAminoAcid())
+				SetMaterials(new Materials(GetCurrentMaterials().GetNucleotide(), GetMaxMaterials().GetAminoAcid()));
+		}
 		NotifyViews();
 	}
 
@@ -278,9 +289,6 @@ public class Virologist extends Character implements IViewable {
 			else if (e.GetChorea()) {
 				hasChorea = true;
 			}
-			else if(e.GetBagsize()!=0){
-				SetMaxMaterials(new Materials(baseBagSize+e.GetBagsize(),baseBagSize+e.GetBagsize()));
-			}
 		}
 
 		if(isBear && !isParalyzed)
@@ -345,100 +353,6 @@ public class Virologist extends Character implements IViewable {
 	public void RefreshAP() {
 		apCurrent = apMax;
 		NotifyViews();
-	}
-
-	/**
-	 * Az Virologist osztály logger fügvénye, mely az adott virológus tulajdonságait írja ki a standard kimentre és fájlba.
-	 * @throws java.io.IOException
-	 */
-	public void log() throws java.io.IOException{
-		System.out.println(Prototype.objectIDs.get(this)+":");
-		System.out.println("\tcurrentField: " + Prototype.objectIDs.get(currentField));
-		System.out.println("\tapMax: "+ apMax);
-		System.out.println("\tapCurrent: "+ apCurrent);
-
-		System.out.print("\tagentRecipes: ");
-		StringJoiner str = new StringJoiner(", ");
-		for(Agent a: agentRecipes)
-			str.add(Prototype.objectIDs.get(a));
-		System.out.println(str.length()==0?"-":str);
-
-		System.out.print("\tagentInventory: ");
-		str = new StringJoiner(", ");
-		for(Agent a: agentInventory)
-			str.add(Prototype.objectIDs.get(a));
-		System.out.println(str.length()==0?"-":str);
-
-		System.out.print("\tmaterials: ");
-		if(materials!=null) {
-			System.out.println("\n\t\tnucleotide: " + materials.GetNucleotide());
-			System.out.println("\t\taminoacid: " + materials.GetAminoAcid());
-		}
-		else
-			System.out.println("-");
-		System.out.print("\tmaxMaterials: ");
-		if(maxMaterials!=null) {
-			System.out.println("\n\t\tnucleotide: " + maxMaterials.GetNucleotide());
-			System.out.println("\t\taminoacid: " + maxMaterials.GetAminoAcid());
-		}
-		else
-			System.out.println("-");
-		System.out.print("\tequipment: ");
-		str = new StringJoiner(", ");
-		for(Equipment e: equipment)
-			str.add(Prototype.objectIDs.get(e));
-		System.out.println(str.length()==0?"-":str);
-
-		System.out.print("\tactiveEffects: ");
-		str = new StringJoiner(", ");
-		for(StatusEffect s: activeEffects)
-			str.add(Prototype.objectIDs.get(s));
-		System.out.println(str.length()==0?"-":str);
-
-		/////////////////
-
-		Prototype.writer.write(Prototype.objectIDs.get(this)+":"+"\n");
-		Prototype.writer.write("\tcurrentField: " + Prototype.objectIDs.get(currentField)+"\n");
-		Prototype.writer.write("\tapMax: "+ apMax+"\n");
-		Prototype.writer.write("\tapCurrent: "+ apCurrent+"\n");
-
-		Prototype.writer.write("\tagentRecipes: ");
-	    str = new StringJoiner(", ");
-		for(Agent a: agentRecipes)
-			str.add(Prototype.objectIDs.get(a));
-		Prototype.writer.write((str.length()==0?"-":str.toString())+"\n");
-
-		Prototype.writer.write("\tagentInventory: ");
-		str = new StringJoiner(", ");
-		for(Agent a: agentInventory)
-			str.add(Prototype.objectIDs.get(a));
-		Prototype.writer.write((str.length()==0?"-":str.toString())+"\n");
-
-		Prototype.writer.write("\tmaterials: ");
-		if(materials!=null) {
-			Prototype.writer.write("\n\t\tnucleotide: " + materials.GetNucleotide()+"\n");
-			Prototype.writer.write("\t\taminoacid: " + materials.GetAminoAcid()+"\n");
-		}
-		else
-			Prototype.writer.write("-"+"\n");
-		Prototype.writer.write("\tmaxMaterials: ");
-		if(maxMaterials!=null) {
-			Prototype.writer.write("\n\t\tnucleotide: " + maxMaterials.GetNucleotide()+"\n");
-			Prototype.writer.write("\t\taminoacid: " + maxMaterials.GetAminoAcid()+"\n");
-		}
-		else
-			Prototype.writer.write("-"+"\n");
-		Prototype.writer.write("\tequipment: ");
-		str = new StringJoiner(", ");
-		for(Equipment e: equipment)
-			str.add(Prototype.objectIDs.get(e));
-		Prototype.writer.write((str.length()==0?"-":str.toString())+"\n");
-
-		Prototype.writer.write("\tactiveEffects: ");
-		str = new StringJoiner(", ");
-		for(StatusEffect s: activeEffects)
-			str.add(Prototype.objectIDs.get(s));
-		Prototype.writer.write((str.length()==0?"-":str.toString())+"\n");
 	}
 
 	public void NotifyViews() {
