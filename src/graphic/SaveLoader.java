@@ -7,25 +7,39 @@ import java.io.*;
 import java.lang.Character;
 import java.util.*;
 
+/** A mentést és betöltést megvalósító osztály.*/
 public class SaveLoader {
+    /** Egy játékkezelő példányt tárol.*/
     private static GameController gc;
+
+    /** Fájlok beolvasására szolgáló elem.*/
     private static Scanner fileScanner;
+
+    /** HashMap, amely egy adott objec-hez egy adott stringet tárol.*/
     public static HashMap<Object, String> objectIDs = new HashMap<>();
+
+    /** HashMap, amely egy adott stringhez egy adott objectet tárol.*/
     public static HashMap<String, Object> objectIDsInv = new HashMap<>();
 
+    /** A pályán szereplő mezőket tárolja.*/
     public static ArrayList<Field> fields = new ArrayList<>();
+
+    /** A pályán szereplő karaktereket tárolja.*/
     public static ArrayDeque<koporscho.Character> virologists = new ArrayDeque<>();
+
+    /** A pályán szereplő ágenseket tárolja.*/
     public static ArrayList<Agent> agents = new ArrayList<>();
+
+    /** A pályán szereplő felszereléseket tárolja.*/
     public static ArrayList<Equipment> equipment = new ArrayList<>();
+
+    /** A játékban szereplő státusz effektusokat tárolja.*/
     public static ArrayList<StatusEffect> statusEffects = new ArrayList<>();
 
+    /** Implicit setter függvény a gamecontrollernek.*/
     public static void SetGc(GameController g){
         gc=g;
     }
-
-    /**
-     * A Prototípus futását megvalósító függvény, itt választhatóak ki a különböző tesztesetek futtatásra.
-     */
 
     /**
      * A paraméterként kapott szöveges parancs felismerését végző függvény. Továbbítja a parancsat az azt tényleges végrehajtó függvénynek.
@@ -245,7 +259,10 @@ public class SaveLoader {
         }
     }
 
-
+    /**
+     * A paraméterként kapott fájlnév alapján soronként feldolgozva annak parancsait elvégzi a pálya felépítését.
+     * @param fname Forrásfájl neve
+     */
     public static void LoadGame(String fname) {
         try {
             File myObj = new File(fname);
@@ -267,30 +284,4 @@ public class SaveLoader {
         gc.SetObjectIDs(objectIDs);
         gc.SetObjectIDsInv(objectIDsInv);
     }
-
-//    /**
-//     * A parancs kimenetét logoló függvény, amely a standard oututra és fájlba dokumentál.
-//     * @param cmd Szöveges parancs
-//     * @throws IOException
-//     */
-//    private static void log(String cmd) throws IOException {
-//        String[] proc = cmd.split(" ");
-//        if(proc.length>1 && Objects.equals(proc[1], "-a")) {
-//            for (Field f : fields) f.log();
-//            for (Virologist v : virologists) v.log();
-//            for (Agent a : agents) a.log();
-//            for (Equipment e : equipment) e.log();
-//            for (StatusEffect s : statusEffects) s.log();
-//        }
-//        else{
-//            switch (proc[1]){
-//                case "-f":((Field)objectIDsInv.get(proc[2])).log(); break;
-//                case "-v":((Virologist)objectIDsInv.get(proc[2])).log(); break;
-//                case "-a":((Agent)objectIDsInv.get(proc[2])).log(); break;
-//                case "-e":((Equipment)objectIDsInv.get(proc[2])).log(); break;
-//                case "-s":((StatusEffect)objectIDsInv.get(proc[2])).log(); break;
-//            }
-//
-//        }
-//    }
 }

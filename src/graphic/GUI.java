@@ -15,35 +15,76 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+/**
+ * Az grafikus kezelőfelület megvalósítására szolgáló osztály.
+ */
 public class GUI extends JFrame{
+    /** HashMap, ami egy adott mezőhöz tárolja a középpontját.*/
     private final HashMap<Field, Point> fieldCentres = new HashMap<>();
+
+    /** Egy Game Controllert tárol.*/
     private final GameController gc = GameController.getInstance();
+
+    /** Egy Game Controller nézetet tárol.*/
     private final GameControllerView gcView = new GameControllerView();
+
+    /** Háttérszín tárolása - inicializálás fekete színnel*/
     private final Color colorBGR = Color.black;
+
+    /** Az ablak szélességét tárolja.*/
     private int wWIDTH = 1536;
+
+    /** Az ablak magasságát tárolja.*/
     private final int wHEIGHT = 552+350;
+
+    /** Használt betűtípusokat tárolása.*/
     private Font font1 = null;
     private Font font2 = null;
+
+    /** Felsorolás a játék egyes állapotaira.*/
     enum GUIState {
         DEFAULT, MOVE, APPLY_AGENT_STEP1, APPLY_AGENT_STEP2, CRAFT_AGENT, DROP_EQUIPMENT, CHOP, STEAL_EQUIPMENT_STEP1, STEAL_EQUIPMENT_STEP2, END_GAME
     }
+
+    /** Hashmap, ami egy adott kép nevéhez egy adott dimenziót tárol.*/
     private final HashMap<String, Dimension> imgDim= new HashMap<>();
+
+    /** Panel, ami a .*/
     private final JPanel contentPane = new JPanel();
+
+    /** Egy GUIstate enum példány, alapértéke DEFAULT*/
     private GUIState state = GUIState.DEFAULT;
+
+    /** A GUI egy példánya*/
     private static GUI instance = null;
+
+    /** A GUI egy példányát adja vissza*/
     public static GUI getInstance() {
         if (instance == null) instance = new GUI();
         return instance;
     }
+
+    /** Háttér panel egy példánya.*/
     private final Background bgrPanel;
+
+    /** Eszköz panel egy példánya.*/
     private final EquipmentPanel eqPanel;
+
+    /** Attribútum panel egy példánya.*/
     private final AttributesPanel attrPanel;
+
+    /** Többhasználatú panel egy példánya.*/
     private final MultiUsePanel muPanel;
+
+    /** Térkép panel egy példánya.*/
     private final Map mapPanel;
+
+    /** Consol panel egy példánya.*/
     private final Console conPanel = new Console();
 
     /**
-     * Kontruktor, amely a grafikus kezelőfelületet létrehozza.
+     * Kontruktor, amely létrehozza a grafikus kezelőfelületet.
+     *  Betűtípusok, menük és karakterek megjelenítése és beállítása.
      */
     private GUI() {
         try {
@@ -147,7 +188,7 @@ public class GUI extends JFrame{
         /** Az adott osztály képei.*/
         Image lab, storage, shelter, city, fieldImage;
 
-        /** Kontruktor, amely a háttér kezelőfelületet létrehozza. */
+        /** Kontruktor, amely az egyes mezők háttérképéit tölti be */
         public Background() {
             name = "background";
             setBackground(Color.RED);//colorBGR);
@@ -165,6 +206,8 @@ public class GUI extends JFrame{
             }
             init();
         }
+
+        /** Egy adott mezőn állva, annak háttérképét frissítő függvény.*/
         public void update(Field f) {
             update();
             if(GameController.objectIDs.get(f).contains("City")){
@@ -184,11 +227,14 @@ public class GUI extends JFrame{
 
             repaint();
             }
-            @Override
-            public void update() {
+
+        @Override
+        public void update() {
             super.update();
-            //img.getGraphics().drawImage(bgr,0,0,null);
         }
+        /** Az háttér kezelőfelületét kirajzoló függvény.
+         * @param g Egy grafika példány
+         */
         @Override
         protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -202,12 +248,18 @@ public class GUI extends JFrame{
      */
     public class AttributesPanel extends InterfaceElement {
         BufferedImage bgr, status, portrait;
+
+        /** Az attribútum kezelőfelületét frissítő függvény.*/
         public void update() {
             super.update();
             Graphics gr = img.getGraphics();
             gr.drawImage(bgr,0,0,null);
             gr.drawImage(portrait,8,8,null);
         }
+
+        /** Az attribútum kezelőfelületet frissítő függvény.
+        *   A karakter, a rajta hatást kifejtő effektek és az általa birtokolt nyersanyagok mennyisége által változhat.
+        */
         public void update(int ap, Materials currMat, Materials maxMat, ArrayList<StatusEffect> statuses, Virologist v) {
             portrait = (BufferedImage) imgMap.get(v);
             update();
@@ -275,6 +327,8 @@ public class GUI extends JFrame{
             }
             repaint();
         }
+
+        /** Kontruktor, amely a tulajdonság kezelőfelületet létrehozza. */
         public AttributesPanel() {
             name = "attributesPanel";
             setOpaque(false);
@@ -289,6 +343,8 @@ public class GUI extends JFrame{
             }
             init();
         }
+
+        /** Az attribútum kezelőfelületét kirajzoló függvény.*/
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -301,7 +357,13 @@ public class GUI extends JFrame{
      * A felszerelés kezelőfelületetének a megvalósítására szolgáló osztály. InterfaceElement az ősosztálya.
      */
     public class EquipmentPanel extends InterfaceElement {
-        Image bgr, slot; BufferedImage eqImg;
+        /** Képeket tárolnak*/
+        Image bgr, slot;
+
+        /** Az éppen betöltött képet tárolja*/
+        BufferedImage eqImg;
+
+        /** Kontruktor, amely az eszköz kezelőfelületet létrehozza. */
         public EquipmentPanel() {
             name = "equipmentPanel";
             setOpaque(false);
@@ -317,6 +379,8 @@ public class GUI extends JFrame{
             }
             init();
         }
+
+        /** Az eszköz kezelőfelületét frissítő függvény.*/
         public void update() {
             super.update();
             Graphics gr = img.getGraphics();
@@ -324,6 +388,7 @@ public class GUI extends JFrame{
             gr.drawImage(bgr,0,0,null);
             gr.drawString("Equipment", 6, 25);
         }
+        /** Az eszköz kezelőfelületét frissítő függvény.*/
         public void update(ArrayList<Equipment> eq) {
             update();
             Graphics gr = img.getGraphics();
@@ -360,6 +425,11 @@ public class GUI extends JFrame{
             }
             repaint();
         }
+
+        /**
+         * Az eszköz kezelőfelületét kirajzoló függvény.
+         * @param g Egy grafika példány
+         */
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -372,11 +442,17 @@ public class GUI extends JFrame{
      * A felszerelés kezelőfelületetének a megvalósítására szolgáló osztály. InterfaceElement az ősosztálya.
      */
     public class MultiUsePanel extends InterfaceElement {
+        /** Képeket tárolnak*/
         Image bgr, slot;
-        BufferedImage inv ;
+        /** Az éppen betöltött képeket tárolják*/
+        BufferedImage inv;
         BufferedImage rec;
         BufferedImage field;
+
+        /** */
         int state = 0;
+
+        /** Kontruktor, amely a többhasználatú kezelőfelületet létrehozza. */
         public MultiUsePanel() {
             name = "multiUsePanel";
             setOpaque(false);
@@ -394,6 +470,8 @@ public class GUI extends JFrame{
             }
             init();
         }
+
+        /** Az többhasználatú kezelőfelületét frissítő függvény.*/
         public void update() {
             super.update();
 
@@ -436,6 +514,8 @@ public class GUI extends JFrame{
             gField.drawString("E", this.getWidth() - xPadding * 8, yPadding + yText);
             gField.drawString("Targets", xText, yText);
         }
+
+        /** Az többhasználatú kezelőfelületét frissítő függvény.*/
         public void update(Virologist v) {
             update();
             Graphics gInv = inv.getGraphics();
@@ -468,6 +548,8 @@ public class GUI extends JFrame{
             }
             repaint();
         }
+
+        /** Az többhasználatú kezelőfelületét kirajzoló függvény.*/
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -484,8 +566,14 @@ public class GUI extends JFrame{
             this.repaint();
         }
     }
+
+    /**
+     * A konzol kezelőfelületetének a megvalósítására szolgáló osztály. InterfaceElement az ősosztálya.
+     */
     public class Console extends InterfaceElement {
         Image bgr;
+
+        /** Kontruktor, amely konzol kezelőfelületet létrehozza. */
         public Console() {
             name = "console";
             setOpaque(false);
@@ -499,6 +587,11 @@ public class GUI extends JFrame{
             }
             init();
         }
+
+        /**
+         *  Az konzol kezelőfelületét kirajzoló függvény.
+         * @param g Egy grafika példány
+         */
         @Override
         protected void paintComponent(Graphics g) {
             update();
@@ -510,13 +603,27 @@ public class GUI extends JFrame{
             g.drawImage(img, 0, 0, null);
             this.repaint();
         }
+
         public void update() {
             super.update();
             Graphics gr = img.getGraphics();
             gr.drawImage(bgr,0,0,null);
         }
-        // Console element test
 
+        /**
+         * Az konzol kezelőfelületének az állapotait renderelő függvény.
+         * Állapotok melyekben lehet a konzol:
+         * DEFAULT: A felhasználó választhat az alább szereplő akciók között.
+         * MOVE: A felhasználó választhat a lehetséges léphető mezők között.
+         * APPLY_AGENT_STEP1: A felhasználó választhat a lehetséges célpontok között.
+         * APPLY_AGENT_STEP2: A felhasználó választhat melyik ágenst használja a kiválasztott célponton.
+         * CRAFT_AGENT: A felhasználó választhat melyik ágenst szeretné elkészíteni.
+         * DROP_EQUIPMENT: A felhasználó választhat melyik felszerelését szeretné eldobni.
+         * CHOP: A felhasználó választhat a lehetséges célpontok között, azon baltával műveletet végrehajtani.
+         * STEAL_EQUIPMENT_STEP1: A felhasználó választhat a lehetséges célpontok között.
+         * STEAL_EQUIPMENT_STEP2: A felhasználó választhat a lehetséges felszerelések között.
+         * END_GAME: Vége a játéknak.
+         */
         void renderOptions(Graphics g){
             if(!gc.GameRunning()) return;
             int xBase = 10, yBase = 35;
@@ -543,6 +650,7 @@ public class GUI extends JFrame{
             int c = 1;
 
             switch (state) {
+                /** DEFAULT: A felhasználó választhat az alább szereplő akciók között.*/
                 case DEFAULT:
                     g.drawString("1. Move", xBase + xPadding, yBase + yPadding * c++);
                     g.drawString("2. Interact", xBase + xPadding, yBase + yPadding * c++);
@@ -552,6 +660,7 @@ public class GUI extends JFrame{
                     g.drawString("6. Chop", xBase + xPadding, yBase + yPadding * c++);
                     g.drawString("7. Steal Equipment", xBase + xPadding, yBase + yPadding * c);
                     break;
+                /** MOVE: A felhasználó választhat a lehetséges léphető mezők között.*/
                 case MOVE:
                     g.drawString("0. Cancel", xBase + xPadding, yBase + yPadding * c++);
 
@@ -559,6 +668,9 @@ public class GUI extends JFrame{
                         g.drawString((i+1) + ". field " + GameController.objectIDs.get(fields.get(i)), xBase + xPadding, yBase + yPadding * c++); //allFields.indexOf(fields.get(i))+1
                         }
                     break;
+                /**APPLY_AGENT_STEP1: A felhasználó választhat a lehetséges célpontok között.
+                 * CHOP: A felhasználó választhat a lehetséges célpontok között, azon baltával műveletet végrehajtani.
+                 * STEAL_EQUIPMENT_STEP1: A felhasználó választhat a lehetséges célpontok között.*/
                 case APPLY_AGENT_STEP1, CHOP, STEAL_EQUIPMENT_STEP1:
                     g.drawString("0. Cancel", xBase + xPadding, yBase + yPadding * c++);
                     if(characters.size()==0){
@@ -615,11 +727,17 @@ public class GUI extends JFrame{
             }
         }
     }
+
+    /**
+     * A térkép megvalósításához használt osztály, az InterfaceElement leszármazottja.
+     */
     public class Map extends InterfaceElement {
-        HashMap<Virologist, Point> virLoc = new HashMap<>();
-        HashSet<Virologist> bears = new HashSet<>();
-        Image bgr;
+        HashMap<Virologist, Point> virLoc = new HashMap<>(); /** Virológusok és az aktuális pozíciójukat tároló HashMap*/
+        HashSet<Virologist> bears = new HashSet<>(); /** Medvevírussal fertőzött Virológus karakterek tároló HashMap*/
+        Image bgr; /**Térkép háttere*/
         String currID;
+
+        /**A Map osztály paraméter nélküli konstruktora, amely betölti a háttérképet és a mezők adatait*/
         public Map() {
             name = "map";
             currID = "";
@@ -636,6 +754,8 @@ public class GUI extends JFrame{
             init();
             fieldCentersFill("saves/fieldCenters.txt");
         }
+
+        /** A térképen történő változások kirajzolásáért felelős update függvény*/
         public void update() {
             Graphics gr = img.getGraphics();
             gr.drawImage(bgr,0,0,null);
@@ -667,6 +787,8 @@ public class GUI extends JFrame{
             }
             repaint();
         }
+
+        /** Virológusok és az aktuális pozíciójukat tároló HashMap frissítő függvénye*/
         public void update(Virologist v, boolean bear) {
             currID = GameController.objectIDs.get(v);
             virLoc.put(v, fieldCentres.get(v.GetField()));
@@ -676,6 +798,10 @@ public class GUI extends JFrame{
             update();
             repaint();
         }
+        /**
+         * A térkép kezelőfelületét kirajzoló függvény.
+         * @param g Egy grafika példány
+         */
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -684,9 +810,15 @@ public class GUI extends JFrame{
             this.repaint();
         }
     }
-    private int targetStep1 = 0;
+
+    private int targetStep1 = 0; /** Lépésre kiválasztott mező azonosítója*/
+
     private final HashMap<IViewable, Image> imgMap = new HashMap<>();
 
+    /**
+     * Paraméterként kapott fájlnév alapján beolvassa a mezők középpontjait (a fieldCenteres HashMap-ben tárolva)
+     * @param fname a forrásfájl neve
+     */
     public void fieldCentersFill(String fname){
         try {
             File f = new File(fname);
@@ -703,6 +835,10 @@ public class GUI extends JFrame{
             e.printStackTrace();
         }
     }
+
+    /**
+     * Billentyűműveletek kezelését végző osztály, amely megvalósítja a KeyListener interface függvényeit.
+     */
     public class KL implements KeyListener {
         @Override
         public void keyTyped(KeyEvent e) {
@@ -712,9 +848,23 @@ public class GUI extends JFrame{
         /**
          * Felhasználói input kezelése a lenyomott gomb alapján.
          * Lehetséges opciók:
-         *  Többhasználatú panel állapotának változtatása -
+         *  Többhasználatú panel állapotának változtatása - q,e
+         *  Karakter irányítása a megjelenő opciók alapján
+         *  Aktuális körön lévő játékos befejezi a körét
+         *  /**
+         *          * Az konzol kezelőfelületének az állapotait renderelő függvény.
+         *          * ÁllapotLehetséges állapotok:
+         *          * DEFAULT:
+         *          * MOVE:
+         *          * APPLY_AGENT_STEP1:
+         *          * APPLY_AGENT_STEP2:
+         *          * CRAFT_AGENT:
+         *          * DROP_EQUIPMENT:
+         *          * CHOP:
+         *          * STEAL_EQUIPMENT_STEP1:
+         *          * STEAL_EQUIPMENT_STEP2:
          *
-         * @param e
+         * @param e Lenyomott gomb eseménye - billentyűkarakter alapján történő kezelés
          */
         @Override
         public void keyPressed(KeyEvent e) {
