@@ -32,6 +32,8 @@ public class GameController implements IViewable {
 	public static HashMap<Object, String> objectIDs = new HashMap<>();
 	public static HashMap<String, Object> objectIDsInv = new HashMap<>();
 
+	public static int bearCount = 0;
+	public static boolean win = false;
 	private static GameController instance=null;
 	public static GameController getInstance(){
 		if (instance == null) instance = new GameController();
@@ -39,7 +41,7 @@ public class GameController implements IViewable {
 	}
 
 	private boolean gameRunning=false;
-	private ArrayList<View> views = new ArrayList<View>();
+	private ArrayList<View> views = new ArrayList<>();
 
 	public Virologist GetCurrentVirologist() {
 		return (Virologist)chQueue.getFirst();
@@ -138,15 +140,21 @@ public class GameController implements IViewable {
 	
 	/** Leállítja a játékot, a paraméterként megadott karaktert kihirdetve győztesnek.*/
 	public void EndGame(Character c) {
-		System.out.println(((Virologist)c).GetName()+" a győztes!");
 		gameRunning=false;
 		NotifyViews();
 	}
 	
 	/** Lépteti a játékot, a következő játékos körét indítja el.*/
 	public void NextTurn() {
+		if(bearCount == chQueue.size()) {
+			EndGame(null);
+			NotifyViews();
+			return;
+		}
 		if(agents.size() != 0 && chQueue.element().GetRecipeCount() == agents.size()) {
+			win = true;
 			EndGame(chQueue.element());
+			NotifyViews();
 			return;
 		}
 		chQueue.add(chQueue.remove());

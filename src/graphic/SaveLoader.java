@@ -9,10 +9,7 @@ import java.util.*;
 
 public class SaveLoader {
     private static GameController gc;
-    public static ArrayList<Test> menuOptions = new ArrayList<>();
     private static Scanner fileScanner;
-    private static int selectedOption;
-    private static boolean running = true;
     public static HashMap<Object, String> objectIDs = new HashMap<>();
     public static HashMap<String, Object> objectIDsInv = new HashMap<>();
 
@@ -21,12 +18,6 @@ public class SaveLoader {
     public static ArrayList<Agent> agents = new ArrayList<>();
     public static ArrayList<Equipment> equipment = new ArrayList<>();
     public static ArrayList<StatusEffect> statusEffects = new ArrayList<>();
-
-    public static float diceRoll = 0.5f;
-
-    private static String fileName = "output.txt";
-
-    public static boolean random = false;
 
     public static void SetGc(GameController g){
         gc=g;
@@ -160,7 +151,8 @@ public class SaveLoader {
     private static void createAgent(String cmd) {
         String[] proc = cmd.split(" ");
         Agent a = new Agent((StatusEffect) objectIDsInv.get(proc[2]),(Materials) objectIDsInv.get(proc[3]), proc[1]);
-        agents.add(a);
+        if(!a.GetEffect().GetBear())
+            agents.add(a);
         objectIDs.put(a, proc[1]);
         objectIDsInv.put(proc[1], a);
     }

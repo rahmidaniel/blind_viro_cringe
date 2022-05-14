@@ -36,14 +36,14 @@ statusEffect Dead dead:true duration:-1
 statusEffect Reflect reflect:true duration:-1
 statusEffect BagSize bagsize:10 duration:-1
 statusEffect Immunity1 immunity:0.7 duration:-1
-equipment Gloves Reflect 3
-equipment Cape Immunity1 -1
-equipment Axe Dead 1
-equipment Bag BagSize -1
-placeEquipment Gloves -f Shelter-1
-placeEquipment Cape -f Shelter-2
-placeEquipment Axe -f Shelter-3
-placeEquipment Bag -f Shelter-4
+equipment gloves Reflect 3
+equipment cloak Immunity1 -1
+equipment axe Dead 1
+equipment bag BagSize -1
+placeEquipment gloves -f Shelter-1
+placeEquipment cloak -f Shelter-2
+placeEquipment axe -f Shelter-3
+placeEquipment bag -f Shelter-4
 materials s1Curr 0 10
 materials s2Curr 10 0
 materials s3Curr 5 5
@@ -56,24 +56,24 @@ placeMaterials s3Curr -f Storage-3
 placeMaterials s1Max -f -m Storage-1
 placeMaterials s2Max -f -m Storage-2
 placeMaterials s3Max -f -m Storage-3
-statusEffect Bear bear:true duration:-1
-statusEffect Chorea chorea:true duration:3
-statusEffect Immunity2 immunity:1 duration:2
-statusEffect Paralyzed paralyzed:true duration:1
-statusEffect Amnesia amnesia:true duration-1
+statusEffect BearEf bear:true duration:-1
+statusEffect ChoreaEf chorea:true duration:3
+statusEffect Immunity2Ef immunity:1 duration:2
+statusEffect ParalyzedEf paralyzed:true duration:1
+statusEffect AmnesiaEf amnesia:true duration-1
 materials BearMat 10 10
 materials ChoreaMat 1 3
 materials Immunity2Mat 4 0
 materials ParalyzedMat 0 4
 materials AmnesiaMat 3 3
-agent BearAgent Bear BearMat
-agent ChoreaAgent Chorea ChoreaMat
-agent ImmunityAgent Immunity2 ImmunityMat
-agent ParalyzedAgent Paralyzed ParalyzedMat
-agent AmnesiaAgent Amnesia AmnesiaMat
+agent BearAgent BearEf BearMat
+agent Chorea ChoreaEf ChoreaMat
+agent Immunity Immunity2Ef Immunity2Mat
+agent Paralyzed ParalyzedEf ParalyzedMat
+agent Amnesia AmnesiaEf AmnesiaMat
 placeAgent BearAgent -f Lab-1 -i
-placeAgent ImmunityAgent -f Lab-1
-placeAgent ChoreaAgent -f Lab-2
-placeAgent ParalyzedAgent -f Lab-3
-placeAgent AmnesiaAgent -f Lab-4
-placeAgent ImmunityAgent -f Lab-5
+placeAgent Immunity -f Lab-1
+placeAgent Chorea -f Lab-2
+placeAgent Paralyzed -f Lab-3
+placeAgent Amnesia -f Lab-4
+placeAgent Immunity -f Lab-5

@@ -20,42 +20,55 @@ import java.util.StringJoiner;
 public class Virologist extends Character implements IViewable {
 	private int apMax, apCurrent;
 
-	/** Tárolja a jelenlegi és a maximum anyagokat*/
+	/**
+	 * Tárolja a jelenlegi és a maximum anyagokat
+	 */
 	private Materials materials, maxMaterials;
 
-	private int baseBagSize=10;
-	
-	/** Tárolja a felszereléseket, amelyek a virológusnál van*/
+	private int baseBagSize = 10;
+
+	/**
+	 * Tárolja a felszereléseket, amelyek a virológusnál van
+	 */
 	private ArrayList<Equipment> equipment;
-	
-	/** Tárolja az elkészített ágenseket, amelyek a virológusnál van*/
+
+	/**
+	 * Tárolja az elkészített ágenseket, amelyek a virológusnál van
+	 */
 	private ArrayList<Agent> agentInventory;
-	
-	/** Tárolja a recepteket, melyeket megtanult a virológus*/
+
+	/**
+	 * Tárolja a recepteket, melyeket megtanult a virológus
+	 */
 	private ArrayList<Agent> agentRecipes;
 
-	/** Virológus neve*/
-	private final String name;
+	/**
+	 * Virológus neve
+	 */
+	private String name;
 
-	private ArrayList<View> views=new ArrayList<>();
+	private ArrayList<View> views = new ArrayList<>();
 
-	/** A Virológus konstruktora.*/
-	public Virologist(String n){
-		name=n;
+	/**
+	 * A Virológus konstruktora.
+	 */
+	public Virologist(String n) {
+		name = n;
 		equipment = new ArrayList<>();
 		agentInventory = new ArrayList<>();
 		agentRecipes = new ArrayList<>();
-		apMax=3;
-		apCurrent=3;
+		apMax = 3;
+		apCurrent = 3;
 	}
 
 	/**
 	 * A Character osztály Move függvényének fölüldefiniálása
+	 *
 	 * @param field Célmező, amelyre a charactert mozgatjuk.
 	 */
 	@Override
-	public void Move(Field field){
-		if(currentField!=null)
+	public void Move(Field field) {
+		if (currentField != null)
 			apCurrent--;
 		super.Move(field);
 		NotifyViews();
@@ -63,10 +76,11 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * Elkészíti a paraméterként beadott ágenst
+	 *
 	 * @param agent Az ágens amit készít a virológus
-	 * */
+	 */
 	public void CraftAgent(Agent agent) {
-		if(agent == null)
+		if (agent == null)
 			return;
 		apCurrent--;
 		if (agentRecipes.contains(agent) && materials.CanCraft(agent.GetRecipe())) {
@@ -76,11 +90,12 @@ public class Virologist extends Character implements IViewable {
 		}
 		NotifyViews();
 	}
-	
+
 	/**
-	 *A virológus eszköztárához hozzáadja a paraméterként kapott anyagokat.
+	 * A virológus eszköztárához hozzáadja a paraméterként kapott anyagokat.
+	 *
 	 * @param m Hozzáadandó anyagok
-	 * */
+	 */
 	public void AddMaterials(Materials m) {
 		materials.SetNucleotide(materials.GetNucleotide() + m.GetNucleotide());
 		materials.SetAminoAcid(materials.GetAminoAcid() + m.GetNucleotide());
@@ -89,6 +104,7 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * A virológus eszköztárához hozzáadja a paraméterként kapott ágenst.
+	 *
 	 * @param agent Hozzáadandó ágens
 	 */
 	public void AddAgent(Agent agent) {
@@ -98,24 +114,28 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * A virológus megtanulja egy ágens receptjét, genetikai kódját.
+	 *
 	 * @param agent Megtanulandó ágens
 	 */
 	public void LearnRecipe(Agent agent) {
-		if(!agentRecipes.contains(agent))
+		if (!agentRecipes.contains(agent))
 			agentRecipes.add(agent);
 		NotifyViews();
 	}
 
-	/** A virológus elfelejti egy ágens receptjét. */
+	/**
+	 * A virológus elfelejti egy ágens receptjét.
+	 */
 	public void ForgetRecipes() {
 		agentRecipes.clear();
 		NotifyViews();
 	}
 
 	/**
-	 *A virológus felkeni a paraméterként kapott ágenst a paraméterként kapott célpontra
+	 * A virológus felkeni a paraméterként kapott ágenst a paraméterként kapott célpontra
+	 *
 	 * @param target Célpont
-	 * @param agent Ágens
+	 * @param agent  Ágens
 	 */
 	public void ApplyAgent(Character target, Agent agent) {
 		target.HandleAgent(this, agent, false);
@@ -126,13 +146,14 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * A virológus ellop egy felszerelést a paraméterként kapott karaktertől.
+	 *
 	 * @param target Célpont, akitől a virológus lop
-	 * @param e Tárgy, amit a virológus ellop
+	 * @param e      Tárgy, amit a virológus ellop
 	 */
 	public void StealEquipment(Character target, Equipment e) {
-		boolean success = ((Virologist)target).HandleSteal(this, e);
+		boolean success = ((Virologist) target).HandleSteal(this, e);
 
-		if(success){
+		if (success) {
 			this.AddEquipment(e);
 			apCurrent--;
 		}
@@ -141,13 +162,16 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * Eltávolítja a paraméterként kapott ágenst a virológustól.
+	 *
 	 * @param a Eltávolítandó ágens
 	 */
 	public void RemoveAgent(Agent a) {
 		agentInventory.remove(a);
 	}
-	
-	/** A mezőn végezhető művelet meghívása.*/
+
+	/**
+	 * A mezőn végezhető művelet meghívása.
+	 */
 	public void Interact() {
 		apCurrent--;
 		VirologistVisitor Vis = new VirologistVisitor(this);
@@ -157,28 +181,30 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * A virológus felvesz egy felszerelést az eszköztárába.
+	 *
 	 * @param e Felszerelés, amit a virológus felvesz
 	 */
 	public void AddEquipment(Equipment e) {
+		if(e == null)
+			return;
 		equipment.add(e);
 		StatusEffect ef = e.GetEffect();
-		if(!ef.GetDead())
+		if (!ef.GetDead())
 			activeEffects.add(e.GetEffect());
-		if(ef.GetBagsize()>0){
-			SetMaxMaterials(new Materials(baseBagSize+ef.GetBagsize(), baseBagSize+ef.GetBagsize()));
+		if (ef.GetBagsize() > 0) {
+			SetMaxMaterials(new Materials(baseBagSize + ef.GetBagsize(), baseBagSize + ef.GetBagsize()));
 		}
 		NotifyViews();
 	}
 
 	/**
 	 * A virológus megtámad a baltával egy másik virológust
+	 *
 	 * @param target A célpont virológus
 	 */
 	public void Chop(Virologist target) {
-		for(Equipment e : this.GetEquipment())
-		{
-			if(e.GetEffect().GetDead() && e.GetDurability() > 0)
-			{
+		for (Equipment e : this.GetEquipment()) {
+			if (e.GetEffect().GetDead() && e.GetDurability() > 0) {
 				target.AddEffect(e.GetEffect());
 				e.DecreaseDurability();
 				apCurrent--;
@@ -189,14 +215,15 @@ public class Virologist extends Character implements IViewable {
 	}
 
 	/**
-	 *  A virológus eltávolít egy felszerelést az eszköztárából.
+	 * A virológus eltávolít egy felszerelést az eszköztárából.
+	 *
 	 * @param e Eltávolítandó felszerelés
 	 */
 	public void RemoveEquipment(Equipment e) {
 		equipment.remove(e);
 		activeEffects.remove(e.GetEffect());
 
-		if (e.GetEffect().GetBagsize()>0){
+		if (e.GetEffect().GetBagsize() > 0) {
 			SetMaxMaterials(new Materials(baseBagSize, baseBagSize));
 
 			if (GetCurrentMaterials().GetNucleotide() > GetMaxMaterials().GetNucleotide())
@@ -210,19 +237,20 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * Kezeli a lopást.
+	 *
 	 * @param source A lopást elkövető virológus
-	 * @param e Ellopott felszerlés
+	 * @param e      Ellopott felszerlés
 	 * @return igazzal tér vissza, ha sikeres volt.
 	 */
 	public boolean HandleSteal(Virologist source, Equipment e) {
 		boolean paralyzed = false;
-		for(StatusEffect ef:activeEffects) {
-			if(ef.GetParalyzed()) {
+		for (StatusEffect ef : activeEffects) {
+			if (ef.GetParalyzed()) {
 				paralyzed = true;
 				break;
 			}
 		}
-		if(paralyzed) {
+		if (paralyzed) {
 			this.RemoveEquipment(e);
 		}
 		NotifyViews();
@@ -231,6 +259,7 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * Implicit getter a virológus által ismert ágens-receptek lekérdezésére.
+	 *
 	 * @return A virológus által ismert ágens-receptek.
 	 */
 	public ArrayList<Agent> GetRecipes() {
@@ -239,6 +268,7 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * Implicit getter a virológus által ismert ágens-inventory lekérdezésére.
+	 *
 	 * @return Ismert ágensek
 	 */
 	public ArrayList<Agent> GetAgentInventory() {
@@ -247,6 +277,7 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * Implicit getter a virológus által birtokolt anyagok lekérdezésére.
+	 *
 	 * @return A virológus által birtokolt anyagok
 	 */
 	public Materials GetCurrentMaterials() {
@@ -255,6 +286,7 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * Implicit getter a virológus által birtokolható maximális anyagok lekérdezésére.
+	 *
 	 * @return A virológus által birtokolható maximális anyagok
 	 */
 	public Materials GetMaxMaterials() {
@@ -263,14 +295,17 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * Implicit getter a virológus által birtokolt felszerelések lekérdezésére.
+	 *
 	 * @return
 	 */
-	public ArrayList<Equipment> GetEquipment(){
+	public ArrayList<Equipment> GetEquipment() {
 		return equipment;
 	}
 
 
-	/** Az idő múlását szimuláló függvény */
+	/**
+	 * Az idő múlását szimuláló függvény
+	 */
 	@Override
 	public void Tick() {
 		//check for bear
@@ -283,23 +318,18 @@ public class Virologist extends Character implements IViewable {
 			}
 			if (e.GetBear()) {
 				isBear = true;
-			}
-			else if(e.GetParalyzed()){
+			} else if (e.GetParalyzed()) {
 				isParalyzed = true;
-			}
-			else if (e.GetChorea()) {
+			} else if (e.GetChorea()) {
 				hasChorea = true;
 			}
 		}
 
-		if(isBear && !isParalyzed)
-		{
+		if (isBear && !isParalyzed) {
 			StatusEffect.Bear(this);
 			this.SetApCurrent(0);
-		}
-		else if(hasChorea)
-		{
-			while(this.GetApCurrent() > 0)
+		} else if (hasChorea) {
+			while (this.GetApCurrent() > 0)
 				StatusEffect.Chorea(this);
 		}
 
@@ -316,20 +346,19 @@ public class Virologist extends Character implements IViewable {
 
 	/**
 	 * Visszatér a karakter által ismert ágensek számával. A győztes kihirdetésénél használt függvény.
+	 *
 	 * @return karakter által ismert ágensek száma
 	 */
 	public int GetRecipeCount() {
 		return agentRecipes.size();
 	}
 
-	public void SetMaxMaterials(Materials m)
-	{
+	public void SetMaxMaterials(Materials m) {
 		maxMaterials = new Materials(m);
 		NotifyViews();
 	}
 
-	public void SetMaterials(Materials m)
-	{
+	public void SetMaterials(Materials m) {
 		materials = new Materials(m);
 		NotifyViews();
 	}
@@ -338,7 +367,7 @@ public class Virologist extends Character implements IViewable {
 		return name;
 	}
 
-	public int GetApCurrent(){
+	public int GetApCurrent() {
 		return apCurrent;
 	}
 
@@ -346,8 +375,8 @@ public class Virologist extends Character implements IViewable {
 		return activeEffects;
 	}
 
-	public void SetApCurrent(int val){
-		apCurrent=val;
+	public void SetApCurrent(int val) {
+		apCurrent = val;
 		NotifyViews();
 	}
 
@@ -357,7 +386,7 @@ public class Virologist extends Character implements IViewable {
 	}
 
 	public void NotifyViews() {
-		for(View v: views){
+		for (View v : views) {
 			v.Redraw(this);
 		}
 	}
@@ -368,5 +397,9 @@ public class Virologist extends Character implements IViewable {
 
 	public void RemoveView(View view) {
 		views.remove(view);
+	}
+
+	public void SetName(String n) {
+		name = n;
 	}
 }

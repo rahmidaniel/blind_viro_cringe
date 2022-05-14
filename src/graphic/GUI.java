@@ -10,10 +10,7 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 
 public class GUI extends JFrame{
     private HashMap<Field, Point> fieldCentres = new HashMap<>();
@@ -26,7 +23,7 @@ public class GUI extends JFrame{
     private Font font1 = null;
     private Font font2 = null;
     enum GUIState {
-        DEFAULT, MOVE, APPLY_AGENT_STEP1, APPLY_AGENT_STEP2, CRAFT_AGENT, DROP_EQUIPMENT, CHOP, STEAL_EQUIPMENT_STEP1, STEAL_EQUIPMENT_STEP2
+        DEFAULT, MOVE, APPLY_AGENT_STEP1, APPLY_AGENT_STEP2, CRAFT_AGENT, DROP_EQUIPMENT, CHOP, STEAL_EQUIPMENT_STEP1, STEAL_EQUIPMENT_STEP2, END_GAME
     }
     private HashMap<String, Dimension> imgDim= new HashMap<>();
     private JPanel contentPane = new JPanel();
@@ -36,11 +33,11 @@ public class GUI extends JFrame{
         if (instance == null) instance = new GUI();
         return instance;
     }
-    private Background bgrPanel;// = new Background();
-    private EquipmentPanel eqPanel;// = new EquipmentPanel();
-    private AttributesPanel attrPanel;// = new AttributesPanel();
-    private MultiUsePanel muPanel;// = new MultiUsePanel();
-    private Map mapPanel;// = new Map();
+    private Background bgrPanel;
+    private EquipmentPanel eqPanel;
+    private AttributesPanel attrPanel;
+    private MultiUsePanel muPanel;
+    private Map mapPanel;
     private Console conPanel = new Console();
     private GUI() {
         try {
@@ -49,7 +46,6 @@ public class GUI extends JFrame{
             int i = 1;
             for (Character c: gc.GetChQueue()) {
                 String fname = String.format("assets/virologist%d.png",i++);
-                System.out.println(fname);
                 BufferedImage img = ImageIO.read(new File(fname));
                 imgMap.put((IViewable) c, img);
             }
@@ -61,7 +57,6 @@ public class GUI extends JFrame{
         attrPanel = new AttributesPanel();
         muPanel = new MultiUsePanel();
         mapPanel = new Map();
-        //private Console conPanel = new Console();
         gc.AddView(gcView);
         for (koporscho.Character v: gc.GetChQueue()) {
             ((Virologist)v).AddView(new VirologistView());
@@ -69,14 +64,7 @@ public class GUI extends JFrame{
         JPanel UIPanel = new JPanel();
 
         UIPanel.setBackground(colorBGR);
-        JPanel filler = new JPanel();
-        JPanel fill = new JPanel();
-        filler.setBackground(Color.gray);
-        filler.setLayout(new BorderLayout());
-        filler.add(fill, BorderLayout.CENTER);
-        fill.setBackground(Color.DARK_GRAY);
 
-        //filler.setPreferredSize(new Dimension(bgr.getWidth(),350));//-eq.getWidth()-ap.getWidth(),350));
         contentPane.setPreferredSize(new Dimension(wWIDTH, wHEIGHT));
         contentPane.setBackground(colorBGR);
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
@@ -87,7 +75,6 @@ public class GUI extends JFrame{
         UIPanel.add(muPanel);
         UIPanel.add(conPanel);
         UIPanel.add(mapPanel);
-        UIPanel.add(filler);
         contentPane.add(UIPanel);
         setContentPane(contentPane);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -116,7 +103,6 @@ public class GUI extends JFrame{
             super.paintComponent(g);
         };
     }
-    private ArrayList<InterfaceElement> interfaceElements = new ArrayList<>();
     public class Background extends InterfaceElement{
         Image lab, storage, shelter, city, fieldImage;
         public Background() {
@@ -183,9 +169,9 @@ public class GUI extends JFrame{
             String aminoStr = String.format("AminoAcid:  %d/%d", currMat.GetAminoAcid(), maxMat.GetAminoAcid());
             String nucleoStr = String.format("Nucleotide: %d/%d", currMat.GetNucleotide(), maxMat.GetNucleotide());
             String apStr = String.format("Action Points:    %d", ap);
-            gr.drawString(aminoStr, 5,230);
-            gr.drawString(nucleoStr, 5,246);
-            gr.drawString(apStr, 5,262);
+            gr.drawString(aminoStr, 5,230+16);
+            gr.drawString(nucleoStr, 5,246+16);
+            gr.drawString(apStr, 5,262+16);
             int i = 0;
             int xOffs = 8;
             int yOffs = 8+128+32;
@@ -284,38 +270,39 @@ public class GUI extends JFrame{
             super.update();
             Graphics gr = img.getGraphics();
             gr.setFont(font1);
-            gr.drawImage(bgr,0,0,null);
-            gr.drawString("Equipment:", 8, 25);
+            gr.drawString("Equipments:", 8, 25);
         }
         public void update(ArrayList<Equipment> eq) {
             update();
             Graphics gr = img.getGraphics();
-            int i = 0;
+
             int xOffs = 15;
             int yOffs = 65;
-
-            for (int j = 0; j < eq.size(); j++) {
-                Equipment e = eq.get(j);
-                gr.drawImage(slot,xOffs-4, yOffs-4 + j*64,null);
-
+            for (int j = 0; j < 3; j++) {
+                gr.drawImage(slot,xOffs-4, yOffs-4 + j * 96,null);
+            }
+            for (int i= 0; i < eq.size(); i++) {
+                Equipment e = eq.get(i);
                 if (e.GetName().equals("axe")) {
-                    BufferedImage image = eqImg.getSubimage(0, 0, 64, 64);
-                    gr.drawImage(image, xOffs, yOffs + i * 64, null);
+                    BufferedImage image;
+                    if(e.GetDurability() > 0) image = eqImg.getSubimage(0, 0, 64, 64);
+                    else image = eqImg.getSubimage(128+2*64, 0, 64, 64);
+                    gr.drawImage(image, xOffs, yOffs + i * 96, null);
                     i++;
                 }
                 if (e.GetName().equals("gloves")) {
                     BufferedImage image = eqImg.getSubimage(64, 0, 64, 64);
-                    gr.drawImage(image, xOffs, yOffs + i * 64, null);
+                    gr.drawImage(image, xOffs, yOffs + i * 96, null);
                     i++;
                 }
                 if (e.GetName().equals("cloak")) {
                     BufferedImage image = eqImg.getSubimage(128, 0, 64, 64);
-                    gr.drawImage(image, xOffs, yOffs + i * 64, null);
+                    gr.drawImage(image, xOffs, yOffs + i * 96, null);
                     i++;
                 }
                 if (e.GetName().equals("bag")) {
                     BufferedImage image = eqImg.getSubimage(128 + 64, 0, 64, 64);
-                    gr.drawImage(image, xOffs, yOffs + i * 64, null);
+                    gr.drawImage(image, xOffs, yOffs + i * 96, null);
                     i++;
                 }
             }
@@ -338,7 +325,7 @@ public class GUI extends JFrame{
             name = "multiUsePanel";
             setOpaque(false);
             try {
-                bgr = ImageIO.read(new File("assets/invPanel_64x128.png"));
+                bgr = ImageIO.read(new File("assets/multipanel.png"));
                 slot = ImageIO.read(new File("assets/slot.png"));
                 img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 inv = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
@@ -364,21 +351,20 @@ public class GUI extends JFrame{
             gRec.setFont(big);
             gField.setFont(big);
             int xPadding = 4, yPadding = 2;
-            int xText = 35, yText = 20;
+            int xText = 45, yText = 20;
             gInv.drawImage(bgr,0,0,null);
-            //gInv.drawString("<-Q-              -E->", 1,20);
-            gInv.drawString("Q", xPadding * 2, yPadding + yText);
-            gInv.drawString("E", this.getWidth() - xPadding * 4, yPadding + yText);
+            gInv.drawString("Q", (int) (xPadding * 2.5), yPadding + yText);
+            gInv.drawString("E", this.getWidth() - xPadding * 5, yPadding + yText);
             gInv.drawString("Inventory", xText, yText);
 
             gRec.drawImage(bgr,0,0,null);
-            gRec.drawString("Q", xPadding * 2, yPadding + yText);
-            gRec.drawString("E", this.getWidth() - xPadding * 4, yPadding + yText);
+            gRec.drawString("Q", (int) (xPadding * 2.5), yPadding + yText);
+            gRec.drawString("E", this.getWidth() - xPadding * 5, yPadding + yText);
             gRec.drawString("Recipes", xText,yText);
 
             gField.drawImage(bgr,0,0,null);
-            gField.drawString("Q", xPadding * 2, yPadding + yText);
-            gField.drawString("E", this.getWidth() - xPadding * 4, yPadding + yText);
+            gField.drawString("Q",(int) (xPadding * 2.5), yPadding + yText);
+            gField.drawString("E", this.getWidth() - xPadding * 5, yPadding + yText);
             gField.drawString("Targets", xText, yText);
         }
         public void update(Virologist v) {
@@ -391,24 +377,24 @@ public class GUI extends JFrame{
             gInv.setFont(big);
             gRec.setFont(big);
             gField.setFont(big);
-            int xOffset = 5;
+            int xOffset = 30;
             int yOffset = 60;
             int yPadding = 30;
             ArrayList<Agent> getAgentInventory = v.GetAgentInventory();
             for (int i = 0; i < getAgentInventory.size(); i++) {
-                gInv.drawImage(slot,xOffset - 2, yOffset + i * yPadding - yPadding/2,null);
+                gInv.drawImage(slot,xOffset - 2, (int) (yOffset + i * yPadding - yPadding * 0.7),null);
                 gInv.drawString(getAgentInventory.get(i).GetName(), xOffset, yOffset + i * yPadding);
             }
 
             ArrayList<Agent> getRecipes = v.GetRecipes();
             for (int i = 0; i < getRecipes.size(); i++) {
-                gRec.drawImage(slot,xOffset - 2, yOffset + i * yPadding - yPadding/2,null);
+                gRec.drawImage(slot,xOffset - 2,(int) (yOffset + i * yPadding - yPadding * 0.7),null);
                 gRec.drawString(getRecipes.get(i).GetName(), xOffset, yOffset + i * yPadding);
             }
 
             ArrayList<Character> getCharacters = v.GetField().GetCharacters();
             for (int i = 0; i < getCharacters.size(); i++) {
-                gField.drawImage(slot,xOffset - 2, yOffset + i * yPadding - yPadding/2,null);
+                gField.drawImage(slot,xOffset - 2, (int) (yOffset + i * yPadding - yPadding * 0.7),null);
                 gField.drawString(((Virologist) getCharacters.get(i)).GetName(), xOffset, yOffset + i * yPadding);
             }
             repaint();
@@ -555,17 +541,19 @@ public class GUI extends JFrame{
                         name = name.isEmpty() ? "<UNIDENTIFIED>" : name;
                         g.drawString((i+1) + ". " + name, xBase + xPadding, yBase + yPadding * c++);
                     }
+                case END_GAME: g.drawString("Game over. Press any key to exit.", xBase + xPadding, yBase + yPadding * c++);
                     break;
             }
         }
     }
     public class Map extends InterfaceElement {
-        HashMap<Virologist,Point> bearLoc = new HashMap<>();
+        HashMap<Virologist, Point> virLoc = new HashMap<>();
+        HashSet<Virologist> bears = new HashSet<>();
         Image bgr;
-        String fieldID;
+        String currID;
         public Map() {
             name = "map";
-            fieldID = "";
+            currID = "";
             setOpaque(false);
             try {
                 bgr = ImageIO.read(new File("assets/mapbgr.png"));
@@ -585,63 +573,36 @@ public class GUI extends JFrame{
             gr.setColor(Color.WHITE);
             gr.setFont(font2);
             HashMap<Point, Integer> pointOffSets = new HashMap<>();
-            for(Point p: bearLoc.values()) {
-                int offs = 0;
-                if(pointOffSets.containsKey(p)) {
-                    Integer tmp = pointOffSets.get(p)+1;
-                    pointOffSets.put(p,tmp);
-                    offs = tmp;
+            for(Virologist v: virLoc.keySet()) {
+                Point p = virLoc.get(v);
+                Integer offset = pointOffSets.get(p);
+                int offs = offset == null ? 0 : offset;
+                if(bears.contains(v)) {
+                    gr.drawString("B", p.x, p.y + 18 * offs++);
                 }
-                else {
-                    pointOffSets.put(p,1);
+                else if(Objects.equals(currID, gc.objectIDs.get(v))){
+                    gr.drawString("V", p.x, p.y + 18 * offs++);
                 }
-                gr.drawString("B", p.x, p.y+12*offs);
-
+                pointOffSets.put(p, offs);
             }
-            if(!fieldID.equals("")) {
-                Point p = fieldCentres.get(gc.objectIDsInv.get(fieldID));
-                int offs = 0;
-                if(pointOffSets.containsKey(p)) {
-                    Integer tmp = pointOffSets.get(p)+1;
-                    pointOffSets.put(p,tmp);
-                    offs = tmp;
-                }
-                else {
-                    pointOffSets.put(p,1);
-                }
-                gr.drawString("V", p.x, p.y+12*offs);
-
-                if(state == GUIState.MOVE) {
-                    ArrayList<Field> neighbors = ((Field)gc.objectIDsInv.get(fieldID)).GetNeighbors();
-                    for(int i = 0; i <neighbors.size();i++) {
-                        String str = String.format("%d",i+1);
-                        p = fieldCentres.get(neighbors.get(i));
-                        offs = 0;
-                        if(pointOffSets.containsKey(p)) {
-                            Integer tmp = pointOffSets.get(p)+1;
-                            pointOffSets.put(p,tmp);
-                            offs = tmp;
-                        }
-                        else {
-                            pointOffSets.put(p,1);
-                        }
-                        gr.drawString(str, p.x, p.y+12*offs);
-                    }
+            if(state == GUIState.MOVE) {
+                Virologist v = (Virologist) gc.objectIDsInv.get(currID);
+                ArrayList<Field> neighbors = v.GetField().GetNeighbors();
+                for(int i = 0; i < neighbors.size();i++) {
+                    String str = String.format("%d",i+1);
+                    Point pt = fieldCentres.get(neighbors.get(i));
+                    Integer offset = pointOffSets.get(pt);
+                    int offs = offset == null ? 0 : offset;
+                    gr.drawString(str, pt.x, pt.y+18*offs);
                 }
             }
             repaint();
         }
         public void update(Virologist v, boolean bear) {
-            if(!bear) {
-                fieldID = gc.objectIDs.get(v.GetField());
-                update();
-                return;
-            }
-            else if(bearLoc.containsKey(v) ) {
-                bearLoc.get(v).setLocation(fieldCentres.get(v.GetField()));
-            }
-            else {
-                bearLoc.put(v, fieldCentres.get(v.GetField()));
+            currID = gc.objectIDs.get(v);
+            virLoc.put(v, fieldCentres.get(v.GetField()));
+            if(bear) {
+                bears.add(v);
             }
             update();
             repaint();
@@ -1071,5 +1032,7 @@ public class GUI extends JFrame{
 
         }
     }
-
+    public void setState(GUIState _state) {
+        state = _state;
+    }
 }

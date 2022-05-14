@@ -50,7 +50,7 @@ public abstract class Character {
 				}
 			}
 
-		if (reflect) {
+		if (reflect && source!= null) {
 			for(Equipment e: ((Virologist)this).GetEquipment()){
 				if(e.GetEffect().GetReflect()){
 					e.DecreaseDurability();
@@ -73,11 +73,24 @@ public abstract class Character {
 				activeEffects.add(e);
 				// Bear Agent
 				if(e.GetBear()){
+					if(!((Virologist)this).GetName().contains("Bear")) {
+						StringBuilder bs = new StringBuilder();
+						bs.insert(0, "Bear(");
+						bs.insert(5, ((Virologist) this).GetName());
+						bs.insert(5 + ((Virologist) this).GetName().length(), ")");
+						((Virologist) this).SetName(bs.toString());
+					}
+					((Virologist)this).SetApCurrent(0);
 					((Virologist)this).GetRecipes().clear();
 					((Virologist)this).GetAgentInventory().clear();
-					for (Equipment eq: ((Virologist)this).GetEquipment()) {
-						((Virologist)this).RemoveEquipment(eq);
+					((Virologist)this).SetMaterials(new Materials(0,0));
+					((Virologist)this).SetMaxMaterials(new Materials(0,0));
+					for (Equipment eq : ((Virologist) this).GetEquipment()) {
+						activeEffects.remove(eq.GetEffect());
 					}
+					((Virologist) this).GetEquipment().clear();
+
+					GameController.getInstance().bearCount++;
 				}
 			}
 		}
