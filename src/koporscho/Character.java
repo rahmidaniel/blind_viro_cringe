@@ -75,9 +75,8 @@ public abstract class Character {
 				if(e.GetBear()){
 					if(!((Virologist)this).GetName().contains("Bear")) {
 						StringBuilder bs = new StringBuilder();
-						bs.insert(0, "Bear(");
-						bs.insert(5, ((Virologist) this).GetName());
-						bs.insert(5 + ((Virologist) this).GetName().length(), ")");
+						bs.insert(0, "Bear-");
+						bs.insert(5, ((Virologist) this).GetName().charAt(((Virologist) this).GetName().length()-1));
 						((Virologist) this).SetName(bs.toString());
 					}
 					((Virologist)this).SetApCurrent(0);

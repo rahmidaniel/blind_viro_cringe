@@ -7,6 +7,9 @@ import koporscho.Character;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,7 +19,6 @@ public class GUI extends JFrame{
     private HashMap<Field, Point> fieldCentres = new HashMap<>();
     private GameController gc = GameController.getInstance();
     private GameControllerView gcView = new GameControllerView();
-    private ArrayList<VirologistView> virViews = new ArrayList<>();
     private Color colorBGR = Color.black;
     private int wWIDTH = 1536;
     private int wHEIGHT = 552+350;
@@ -39,6 +41,10 @@ public class GUI extends JFrame{
     private MultiUsePanel muPanel;
     private Map mapPanel;
     private Console conPanel = new Console();
+
+    /**
+     * Kontruktor, amely a grafikus kezelőfelületet létrehozza.
+     */
     private GUI() {
         try {
             font1 = Font.createFont(Font.TRUETYPE_FONT, new File("assets/VCR_OSD_MONO_1.001.ttf")).deriveFont(16f); //VCR_OSD_MONO_1.001.ttf
@@ -270,7 +276,8 @@ public class GUI extends JFrame{
             super.update();
             Graphics gr = img.getGraphics();
             gr.setFont(font1);
-            gr.drawString("Equipments:", 8, 25);
+            gr.drawImage(bgr,0,0,null);
+            gr.drawString("Equipment", 6, 25);
         }
         public void update(ArrayList<Equipment> eq) {
             update();
@@ -350,21 +357,34 @@ public class GUI extends JFrame{
             gInv.setFont(big);
             gRec.setFont(big);
             gField.setFont(big);
+
+            FontRenderContext frc = ((Graphics2D)gInv).getFontRenderContext();
+            GlyphVector gv = big.createGlyphVector(frc, "Inventory");
+            Rectangle2D box = gv.getVisualBounds();
+
+            int xText = (int)(((getWidth() - box.getWidth()) / 2d) + (-box.getX())) - 5;
+            int yText = 20;
+
             int xPadding = 4, yPadding = 2;
-            int xText = 45, yText = 20;
             gInv.drawImage(bgr,0,0,null);
             gInv.drawString("Q", (int) (xPadding * 2.5), yPadding + yText);
-            gInv.drawString("E", this.getWidth() - xPadding * 5, yPadding + yText);
+            gInv.drawString("E", this.getWidth() - xPadding * 8, yPadding + yText);
             gInv.drawString("Inventory", xText, yText);
 
+            GlyphVector gr = big.createGlyphVector(frc, "Recipes");
+            box = gr.getVisualBounds();
+            xText = (int)(((getWidth() - box.getWidth()) / 2d) + (-box.getX())) - 5;
             gRec.drawImage(bgr,0,0,null);
             gRec.drawString("Q", (int) (xPadding * 2.5), yPadding + yText);
-            gRec.drawString("E", this.getWidth() - xPadding * 5, yPadding + yText);
-            gRec.drawString("Recipes", xText,yText);
+            gRec.drawString("E", this.getWidth() - xPadding * 8, yPadding + yText);
+            gRec.drawString("Recipes", xText, yText);
 
+            GlyphVector gf = big.createGlyphVector(frc, "Targets");
+            box = gf.getVisualBounds();
+            xText = (int)(((getWidth() - box.getWidth()) / 2d) + (-box.getX())) - 5;
             gField.drawImage(bgr,0,0,null);
             gField.drawString("Q",(int) (xPadding * 2.5), yPadding + yText);
-            gField.drawString("E", this.getWidth() - xPadding * 5, yPadding + yText);
+            gField.drawString("E", this.getWidth() - xPadding * 8, yPadding + yText);
             gField.drawString("Targets", xText, yText);
         }
         public void update(Virologist v) {
@@ -377,24 +397,24 @@ public class GUI extends JFrame{
             gInv.setFont(big);
             gRec.setFont(big);
             gField.setFont(big);
-            int xOffset = 30;
+            int xOffset = 35;
             int yOffset = 60;
             int yPadding = 30;
             ArrayList<Agent> getAgentInventory = v.GetAgentInventory();
             for (int i = 0; i < getAgentInventory.size(); i++) {
-                gInv.drawImage(slot,xOffset - 2, (int) (yOffset + i * yPadding - yPadding * 0.7),null);
+                gInv.drawImage(slot,xOffset - 20, (int) (yOffset + i * yPadding - yPadding * 0.7),null);
                 gInv.drawString(getAgentInventory.get(i).GetName(), xOffset, yOffset + i * yPadding);
             }
 
             ArrayList<Agent> getRecipes = v.GetRecipes();
             for (int i = 0; i < getRecipes.size(); i++) {
-                gRec.drawImage(slot,xOffset - 2,(int) (yOffset + i * yPadding - yPadding * 0.7),null);
+                gRec.drawImage(slot,xOffset - 20,(int) (yOffset + i * yPadding - yPadding * 0.7),null);
                 gRec.drawString(getRecipes.get(i).GetName(), xOffset, yOffset + i * yPadding);
             }
 
             ArrayList<Character> getCharacters = v.GetField().GetCharacters();
             for (int i = 0; i < getCharacters.size(); i++) {
-                gField.drawImage(slot,xOffset - 2, (int) (yOffset + i * yPadding - yPadding * 0.7),null);
+                gField.drawImage(slot,xOffset - 20, (int) (yOffset + i * yPadding - yPadding * 0.7),null);
                 gField.drawString(((Virologist) getCharacters.get(i)).GetName(), xOffset, yOffset + i * yPadding);
             }
             repaint();
@@ -411,7 +431,7 @@ public class GUI extends JFrame{
                 case 2:
                     gr.drawImage(field,0,0,null);break;
             }
-            g.drawImage(img, 0, 0, this);
+            g.drawImage(img, 0, 0, null);
             this.repaint();
         }
     }
@@ -438,7 +458,7 @@ public class GUI extends JFrame{
             Font big = font1.deriveFont(22.0f);
             gr.setFont(big);
             renderOptions(gr);
-            g.drawImage(img, 0, 0, this);
+            g.drawImage(img, 0, 0, null);
             this.repaint();
         }
         public void update() {
