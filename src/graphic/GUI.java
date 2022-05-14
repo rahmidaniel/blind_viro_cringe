@@ -16,31 +16,31 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class GUI extends JFrame{
-    private HashMap<Field, Point> fieldCentres = new HashMap<>();
-    private GameController gc = GameController.getInstance();
-    private GameControllerView gcView = new GameControllerView();
-    private Color colorBGR = Color.black;
+    private final HashMap<Field, Point> fieldCentres = new HashMap<>();
+    private final GameController gc = GameController.getInstance();
+    private final GameControllerView gcView = new GameControllerView();
+    private final Color colorBGR = Color.black;
     private int wWIDTH = 1536;
-    private int wHEIGHT = 552+350;
+    private final int wHEIGHT = 552+350;
     private Font font1 = null;
     private Font font2 = null;
     enum GUIState {
         DEFAULT, MOVE, APPLY_AGENT_STEP1, APPLY_AGENT_STEP2, CRAFT_AGENT, DROP_EQUIPMENT, CHOP, STEAL_EQUIPMENT_STEP1, STEAL_EQUIPMENT_STEP2, END_GAME
     }
-    private HashMap<String, Dimension> imgDim= new HashMap<>();
-    private JPanel contentPane = new JPanel();
+    private final HashMap<String, Dimension> imgDim= new HashMap<>();
+    private final JPanel contentPane = new JPanel();
     private GUIState state = GUIState.DEFAULT;
     private static GUI instance = null;
     public static GUI getInstance() {
         if (instance == null) instance = new GUI();
         return instance;
     }
-    private Background bgrPanel;
-    private EquipmentPanel eqPanel;
-    private AttributesPanel attrPanel;
-    private MultiUsePanel muPanel;
-    private Map mapPanel;
-    private Console conPanel = new Console();
+    private final Background bgrPanel;
+    private final EquipmentPanel eqPanel;
+    private final AttributesPanel attrPanel;
+    private final MultiUsePanel muPanel;
+    private final Map mapPanel;
+    private final Console conPanel = new Console();
 
     /**
      * Kontruktor, amely a grafikus kezelőfelületet létrehozza.
@@ -89,28 +89,65 @@ public class GUI extends JFrame{
         setTitle("");
         addKeyListener(new KL());
     }
+
+    /**
+     *  Implicict getter a háttérpanel lekérdezéséhez.
+     */
     public Background getBgrPanel() {return bgrPanel;}
+
+    /**
+     *  Implicict getter az eszköz panel lekérdezéséhez.
+     */
     public EquipmentPanel getEqPanel() {return eqPanel;}
+
+    /**
+     *  Implicict getter az tulajdonság panel lekérdezéséhez.
+     */
     public AttributesPanel getAttrPanel() {return attrPanel;}
+
+    /**
+     *  Implicict getter a multi usepanel lekérdezéséhez.
+     */
     public MultiUsePanel getMuPanel() {return muPanel;}
+
+    /**
+     *  Implicict getter a map panel lekérdezéséhez.
+     */
     public Map getMapPanel() {return mapPanel;}
+
+    /**
+     * Az interface elem megvalósítására szolgáló osztály.
+     */
     private abstract class InterfaceElement extends JPanel {
+
+        /** Az adott osztály neve.*/
         protected String name;
+        /** Az adott osztály képe.*/
         protected Image img = new BufferedImage(wWIDTH, wHEIGHT, BufferedImage.TYPE_INT_ARGB);
+        /** Inicializáló függvény.*/
         public void init() {
             setPreferredSize(imgDim.get(name));
             update();
             repaint();
         }
+        /** Az interfacet frissítő függvény.*/
         public void update() {
             img.getGraphics().clearRect(0, 0, img.getWidth(null), img.getHeight(null));
-        };
+        }
+        /** Az interfacet kirajzoló függvény.*/
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-        };
+        }
     }
+
+    /**
+     * A háttér kezelőfelületetének a megvalósítására szolgáló osztály. InterfaceElement az ősosztálya.
+     */
     public class Background extends InterfaceElement{
+        /** Az adott osztály képei.*/
         Image lab, storage, shelter, city, fieldImage;
+
+        /** Kontruktor, amely a háttér kezelőfelületet létrehozza. */
         public Background() {
             name = "background";
             setBackground(Color.RED);//colorBGR);
@@ -130,16 +167,16 @@ public class GUI extends JFrame{
         }
         public void update(Field f) {
             update();
-            if(gc.objectIDs.get(f).contains("City")){
+            if(GameController.objectIDs.get(f).contains("City")){
                 fieldImage = city;
             }
-            if(gc.objectIDs.get(f).contains("Shelter")){
+            if(GameController.objectIDs.get(f).contains("Shelter")){
                 fieldImage = shelter;
             }
-            if(gc.objectIDs.get(f).contains("Lab")){
+            if(GameController.objectIDs.get(f).contains("Lab")){
                 fieldImage = lab;
             }
-            if(gc.objectIDs.get(f).contains("Storage")){
+            if(GameController.objectIDs.get(f).contains("Storage")){
                 fieldImage = storage;
             }
 
@@ -159,6 +196,10 @@ public class GUI extends JFrame{
                 this.repaint();
         }
     }
+
+    /**
+     * A tulajdonságok kezelőfelületetének a megvalósítására szolgáló osztály. InterfaceElement az ősosztálya.
+     */
     public class AttributesPanel extends InterfaceElement {
         BufferedImage bgr, status, portrait;
         public void update() {
@@ -168,7 +209,7 @@ public class GUI extends JFrame{
             gr.drawImage(portrait,8,8,null);
         }
         public void update(int ap, Materials currMat, Materials maxMat, ArrayList<StatusEffect> statuses, Virologist v) {
-            portrait = (BufferedImage) imgMap.get((IViewable) v);
+            portrait = (BufferedImage) imgMap.get(v);
             update();
             Graphics gr = img.getGraphics();
             gr.setFont(font1);
@@ -255,6 +296,10 @@ public class GUI extends JFrame{
             this.repaint();
         }
     }
+
+    /**
+     * A felszerelés kezelőfelületetének a megvalósítására szolgáló osztály. InterfaceElement az ősosztálya.
+     */
     public class EquipmentPanel extends InterfaceElement {
         Image bgr, slot; BufferedImage eqImg;
         public EquipmentPanel() {
@@ -322,6 +367,10 @@ public class GUI extends JFrame{
             this.repaint();
         }
     }
+
+    /**
+     * A felszerelés kezelőfelületetének a megvalósítására szolgáló osztály. InterfaceElement az ősosztálya.
+     */
     public class MultiUsePanel extends InterfaceElement {
         Image bgr, slot;
         BufferedImage inv ;
@@ -507,7 +556,7 @@ public class GUI extends JFrame{
                     g.drawString("0. Cancel", xBase + xPadding, yBase + yPadding * c++);
 
                     for(int i=0; i < fields.size();i++){
-                        g.drawString((i+1) + ". field " + gc.objectIDs.get(fields.get(i)), xBase + xPadding, yBase + yPadding * c++); //allFields.indexOf(fields.get(i))+1
+                        g.drawString((i+1) + ". field " + GameController.objectIDs.get(fields.get(i)), xBase + xPadding, yBase + yPadding * c++); //allFields.indexOf(fields.get(i))+1
                         }
                     break;
                 case APPLY_AGENT_STEP1, CHOP, STEAL_EQUIPMENT_STEP1:
@@ -600,13 +649,13 @@ public class GUI extends JFrame{
                 if(bears.contains(v)) {
                     gr.drawString("B", p.x, p.y + 18 * offs++);
                 }
-                else if(Objects.equals(currID, gc.objectIDs.get(v))){
+                else if(Objects.equals(currID, GameController.objectIDs.get(v))){
                     gr.drawString("V", p.x, p.y + 18 * offs++);
                 }
                 pointOffSets.put(p, offs);
             }
             if(state == GUIState.MOVE) {
-                Virologist v = (Virologist) gc.objectIDsInv.get(currID);
+                Virologist v = (Virologist) GameController.objectIDsInv.get(currID);
                 ArrayList<Field> neighbors = v.GetField().GetNeighbors();
                 for(int i = 0; i < neighbors.size();i++) {
                     String str = String.format("%d",i+1);
@@ -619,7 +668,7 @@ public class GUI extends JFrame{
             repaint();
         }
         public void update(Virologist v, boolean bear) {
-            currID = gc.objectIDs.get(v);
+            currID = GameController.objectIDs.get(v);
             virLoc.put(v, fieldCentres.get(v.GetField()));
             if(bear) {
                 bears.add(v);
@@ -636,7 +685,7 @@ public class GUI extends JFrame{
         }
     }
     private int targetStep1 = 0;
-    private HashMap<IViewable, Image> imgMap = new HashMap<>();
+    private final HashMap<IViewable, Image> imgMap = new HashMap<>();
 
     public void fieldCentersFill(String fname){
         try {
@@ -646,7 +695,7 @@ public class GUI extends JFrame{
 
             while(sc.hasNextLine()) {
                 parts.addAll(Arrays.stream(sc.nextLine().split(",")).toList());
-                fieldCentres.put((Field)gc.objectIDsInv.get(parts.get(0)), new Point(Integer.parseInt(parts.get(1)),Integer.parseInt(parts.get(2))));
+                fieldCentres.put((Field) GameController.objectIDsInv.get(parts.get(0)), new Point(Integer.parseInt(parts.get(1)),Integer.parseInt(parts.get(2))));
                 parts = new ArrayList<>();
             }
             sc.close();
@@ -660,6 +709,13 @@ public class GUI extends JFrame{
 
         }
 
+        /**
+         * Felhasználói input kezelése a lenyomott gomb alapján.
+         * Lehetséges opciók:
+         *  Többhasználatú panel állapotának változtatása -
+         *
+         * @param e
+         */
         @Override
         public void keyPressed(KeyEvent e) {
 

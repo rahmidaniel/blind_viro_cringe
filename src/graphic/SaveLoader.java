@@ -66,7 +66,7 @@ public class SaveLoader {
     private static  void createVirologist(String cmd) {
         String[] proc = cmd.split(" ");
         Virologist v = new Virologist(proc[1]);
-        virologists.add((koporscho.Character)v);
+        virologists.add(v);
         objectIDs.put(v, proc[1]);
         objectIDsInv.put(proc[1], v);
     }
@@ -86,7 +86,7 @@ public class SaveLoader {
                 case "lab" : f = new Lab(); break;
                 case "shelter" : f =new Shelter(); break;
                 case "storage" : f = new Storage(); break;
-            };
+            }
             String id = proc[i+1];
             if(proc[i+1].endsWith(";"))
                 id = proc[i+1].substring(0,proc[i+1].length()-1);

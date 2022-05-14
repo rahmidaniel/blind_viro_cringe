@@ -15,7 +15,7 @@ public class GameControllerView extends View{
             try {
                 BufferedImage image;
                 String title;
-                if(gc.win) {
+                if(GameController.win) {
                     image = ImageIO.read(new File("assets/winner.png"));
                     title = "The winner is " + gc.GetCurrentVirologist().GetName();
                 }

@@ -19,7 +19,7 @@ import java.util.*;
 /** A játékteret reprezentáló osztály */
 public class GameMap {
 	/** A pályán szereplő mezőket tárolja*/
-	private ArrayList<Field> fields;
+	private final ArrayList<Field> fields;
 
 	/**
 	 * Létrehozza a pályát a paraméterként mezőkből.

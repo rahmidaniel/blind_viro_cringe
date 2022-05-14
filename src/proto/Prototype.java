@@ -11,7 +11,7 @@ public class Prototype {
     public static ArrayList<Test> menuOptions = new ArrayList<>();
     private static boolean fromFile = false;
     private static Scanner fileScanner;
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
     private static int selectedOption;
     private static boolean running = true;
     public static HashMap<Object, String> objectIDs = new HashMap<>();
@@ -24,7 +24,7 @@ public class Prototype {
     public static ArrayList<StatusEffect> statusEffects = new ArrayList<>();
     public static float diceRoll = 0.5f;
 
-    private static String fileName = "output.txt";
+    private static final String fileName = "output.txt";
     public static BufferedWriter writer;
 
     public static boolean random = false;
@@ -153,7 +153,7 @@ public class Prototype {
                 case "lab" : f = new Lab(); break;
                 case "shelter" : f =new Shelter(); break;
                 case "storage" : f = new Storage(); break;
-            };
+            }
             String id = proc[i+1];
             if(proc[i+1].endsWith(";"))
                 id = proc[i+1].substring(0,proc[i+1].length()-1);

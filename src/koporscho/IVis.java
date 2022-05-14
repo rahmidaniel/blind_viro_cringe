@@ -17,14 +17,14 @@ package koporscho;
 /** Visitor interface. Mezőkkel való interakciókért felelős */
 public interface IVis {
 	/** A várossal való interakciókért felelős. */
-	public void InteractCity();
+    void InteractCity();
 
 	/** Az óvóhellyel való interakciókért felelős.*/
-	public void InteractShelter();
+    void InteractShelter();
 	
 	/** A raktárral való interakciókért felelős.*/
-	public void InteractStorage();
+    void InteractStorage();
 	
 	/** A laboratóriummal való interakciókért felelős.*/
-	public void InteractLab();
+    void InteractLab();
 }

@@ -3,10 +3,10 @@ package koporscho;
 public class BearVisitor implements IVis {
 
     /** Tárolja az elkövető Virológust*/
-    private Virologist sourceVirologist;
+    private final Virologist sourceVirologist;
 
     /** Referencia a mezőre, amin az interakció történik*/
-    private Field targetField;
+    private final Field targetField;
 
     /**
      * A BearVisitor egy paraméteres konstruktora.

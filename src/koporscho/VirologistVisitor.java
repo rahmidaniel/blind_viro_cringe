@@ -14,10 +14,10 @@ package koporscho;
 /** */
 public class VirologistVisitor implements IVis {
 	/** Tárolja az elkövető Virológust*/
-	private Virologist sourceVirologist;
+	private final Virologist sourceVirologist;
 
 	/** A mezőt tárolja, amin áll az elkövető*/
-	private Field targetField;
+	private final Field targetField;
 
 
 	/**

@@ -18,36 +18,37 @@ import java.util.StringJoiner;
 
 /** A Virológust reprezentálja a játéban*/
 public class Virologist extends Character implements IViewable {
-	private int apMax, apCurrent;
+	private final int apMax;
+	private int apCurrent;
 
 	/**
 	 * Tárolja a jelenlegi és a maximum anyagokat
 	 */
 	private Materials materials, maxMaterials;
 
-	private int baseBagSize = 10;
+	private final int baseBagSize = 10;
 
 	/**
 	 * Tárolja a felszereléseket, amelyek a virológusnál van
 	 */
-	private ArrayList<Equipment> equipment;
+	private final ArrayList<Equipment> equipment;
 
 	/**
 	 * Tárolja az elkészített ágenseket, amelyek a virológusnál van
 	 */
-	private ArrayList<Agent> agentInventory;
+	private final ArrayList<Agent> agentInventory;
 
 	/**
 	 * Tárolja a recepteket, melyeket megtanult a virológus
 	 */
-	private ArrayList<Agent> agentRecipes;
+	private final ArrayList<Agent> agentRecipes;
 
 	/**
 	 * Virológus neve
 	 */
 	private String name;
 
-	private ArrayList<View> views = new ArrayList<>();
+	private final ArrayList<View> views = new ArrayList<>();
 
 	/**
 	 * A Virológus konstruktora.
