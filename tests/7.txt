@@ -1,9 +1,0 @@
-map lab l1
-virologist v1
-move v1 l1
-materials m1 10 9
-statusEffect e1 amnesia:true
-agent a1 e1 m1
-placeAgent a1 -f l1
-interact v1 l1
-log -a

@@ -4,6 +4,7 @@ import graphic.IViewable;
 import graphic.SaveLoader;
 import graphic.View;
 
+import java.lang.constant.Constable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class GameController implements IViewable {
         if (instance == null) instance = new GameController();
         return instance;
     }
-
+    private static String mapName = "";
     private boolean gameRunning = false;
     private final ArrayList<View> views = new ArrayList<>();
 
@@ -150,8 +151,9 @@ public class GameController implements IViewable {
      * Elindítja a játékot a paraméterként megadott karakterekkel, ágensekkel és felszerelésekkel.
      */
     public void StartGame(String file) {
+        mapName = file;
         SaveLoader.SetGc(this);
-        SaveLoader.LoadGame(file);
+        SaveLoader.LoadGame("saves/"+file+".txt");
         gameRunning = true;
         NotifyViews();
     }
@@ -310,5 +312,9 @@ public class GameController implements IViewable {
                 f.SetNeighbors(neighborsArr);
             }
         }
+    }
+
+    public static String getMapName() {
+        return mapName;
     }
 }

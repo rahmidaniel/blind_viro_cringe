@@ -1,9 +1,0 @@
-map city c1; city c2;
-c2
-c1
-virologist v1
-move v1 c1
-statusEffect bE bear:true duration:-1
-placeEffect bE v1
-endTurn v1
-log -a

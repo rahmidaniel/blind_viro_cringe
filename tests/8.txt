@@ -1,8 +1,0 @@
-map shelter s1
-virologist v1
-move v1 s1
-statusEffect e1 immunity:0.9
-equipment cloak e1 -1
-placeEquipment cloak -f s1
-interact v1 s1
-log -a
