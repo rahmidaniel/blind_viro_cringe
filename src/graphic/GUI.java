@@ -399,8 +399,9 @@ public class GUI extends JFrame{
             for (int j = 0; j < 3; j++) {
                 gr.drawImage(slot,xOffs-4, yOffs-4 + j * 96,null);
             }
-            for (int i= 0; i < eq.size(); i++) {
-                Equipment e = eq.get(i);
+            int i = 0;
+            for (int j = 0; j < eq.size(); j++) {
+                Equipment e = eq.get(j);
                 if (e.GetName().equals("axe")) {
                     BufferedImage image;
                     if(e.GetDurability() > 0) image = eqImg.getSubimage(0, 0, 64, 64);
@@ -836,7 +837,8 @@ public class GUI extends JFrame{
             ArrayList<String> parts = new ArrayList<>();
 
             while(sc.hasNextLine()) {
-                parts.addAll(Arrays.stream(sc.nextLine().split(",")).toList());
+                String[] strings = sc.nextLine().split(",");
+                parts.addAll(Arrays.asList(strings));
                 fieldCentres.put((Field) GameController.objectIDsInv.get(parts.get(0)), new Point(Integer.parseInt(parts.get(1)),Integer.parseInt(parts.get(2))));
                 parts = new ArrayList<>();
             }

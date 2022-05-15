@@ -64,8 +64,8 @@ public class VirologistVisitor implements IVis {
 		int s;
 		if((s = sourceVirologist.GetEquipment().size()) == 3)
 		{
-			((Shelter)targetField).AddEquipment(sourceVirologist.GetEquipment().get(s));
-			sourceVirologist.RemoveEquipment(sourceVirologist.GetEquipment().get(s));
+			((Shelter)targetField).AddEquipment(sourceVirologist.GetEquipment().get(0));
+			sourceVirologist.RemoveEquipment(sourceVirologist.GetEquipment().get(0));
 		}
 
 		sourceVirologist.AddEquipment(temp);
