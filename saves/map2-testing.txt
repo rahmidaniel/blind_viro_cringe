@@ -46,7 +46,7 @@ placeEquipment axe -f Shelter-3
 placeEquipment bag -f Shelter-4
 materials s1Curr 0 10
 materials s2Curr 10 0
-materials s3Curr 5 5
+materials s3Curr 2 7
 materials s1Max 10 10
 materials s2Max 10 10
 materials s3Max 10 10
