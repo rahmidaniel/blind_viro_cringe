@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             GameController gc = GameController.getInstance();
-            Object[] possibilities = {"map1", "map2"};
+            Object[] possibilities = {"map1", "map2-testing"};
             String fname = (String)JOptionPane.showInputDialog(
                     null,
                     "Please choose a map provided below: ",

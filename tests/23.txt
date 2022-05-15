@@ -1,8 +1,0 @@
-map city c1
-virologist v1
-move v1 c1
-statusEffect e1 paralyzed:true duration:1
-placeEffect e1 v1
-log -v v1
-endTurn v1
-log -a
