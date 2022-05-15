@@ -4,9 +4,6 @@
     <option name="fileTypesIncluded" value="java" />
     <option name="excludedDirectories">
       <list>
-        <option value="$PROJECT_DIR$/src/koporscho" />
-        <option value="$PROJECT_DIR$/src/proto" />
-        <option value="$PROJECT_DIR$/src/koporscho" />
         <option value="$PROJECT_DIR$/src/proto" />
       </list>
     </option>

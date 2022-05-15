@@ -852,7 +852,6 @@ public class GUI extends JFrame{
         public void keyTyped(KeyEvent e) {
 
         }
-
         /**
          * Felhasználói input kezelése a lenyomott gomb alapján.
          * Lehetséges opciók:
