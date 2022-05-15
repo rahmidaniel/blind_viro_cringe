@@ -127,7 +127,7 @@ public class GUI extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
         setResizable(false);
-        setTitle("");
+        setTitle("Koporscho TM: Blind Virologists");
         addKeyListener(new KL());
     }
 
@@ -743,7 +743,7 @@ public class GUI extends JFrame{
             currID = "";
             setOpaque(false);
             try {
-                bgr = ImageIO.read(new File("assets/mapbgr.png"));
+                bgr = ImageIO.read(new File("assets/"+gc.getMapName()+".png"));
                 img = new BufferedImage(bgr.getWidth(null), bgr.getHeight(null), BufferedImage.TYPE_INT_ARGB);
                 img.getGraphics().setFont(font2);
                 imgDim.put(name,new Dimension(img.getWidth(null),img.getHeight(null)));
@@ -752,7 +752,7 @@ public class GUI extends JFrame{
                 e.printStackTrace();
             }
             init();
-            fieldCentersFill("saves/fieldCenters.txt");
+            fieldCentersFill("saves/fc_"+gc.getMapName()+".txt");
         }
 
         /** A térképen történő változások kirajzolásáért felelős update függvény*/
