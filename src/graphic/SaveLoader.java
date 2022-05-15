@@ -240,6 +240,7 @@ public class SaveLoader {
         String[] proc = cmd.split(" ");
         Materials m = (Materials) objectIDsInv.get(proc[1]);
         switch (proc[2]) {
+            ///** -v esetén a virológuson helyez el anyagot*/
             case "-v" : {
                 Virologist v = (Virologist) objectIDsInv.get(proc[proc.length - 1]);
                 if (Objects.equals(proc[3], "-m"))
@@ -248,6 +249,7 @@ public class SaveLoader {
                     v.SetMaterials(m);
                 break;
             }
+            ///** -f esetén a raktárban helyez el anyagot*/
             case "-f" : {
                 Storage f = (Storage) objectIDsInv.get(proc[proc.length - 1]);
                 if (Objects.equals(proc[3], "-m"))

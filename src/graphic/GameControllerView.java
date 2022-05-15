@@ -8,9 +8,18 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+/**
+ * GameContorllerView osztály, amely a teljes játéktér újrarajzolásáért és végeredmény megjelenítéséért felel.
+ */
 public class GameControllerView extends View{
+    /**
+     * A teljes játéktér újrarajzolását végző függvény.
+     * Ha a játék véget ért, megjelenít valamely végeredményt prezentáló képet, ezzel végeredményt hirdetve.
+     * @param obj Egy IViewable példány
+     */
     public void Redraw(IViewable obj){
         GameController gc = (GameController) obj;
+        /**Végeredmény hirdetése*/
         if(!gc.GameRunning()) {
             try {
                 BufferedImage image;
@@ -33,6 +42,7 @@ public class GameControllerView extends View{
             System.exit(1);
             return;
         }
+        /**Teljes játéktér frissítése*/
         Virologist cur = gc.GetCurrentVirologist();
         GUI gui = GUI.getInstance();
         gui.getAttrPanel().update(cur.GetApCurrent(), cur.GetCurrentMaterials(), cur.GetMaxMaterials(), cur.GetStatusEffects(), cur);

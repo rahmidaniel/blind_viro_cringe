@@ -99,6 +99,7 @@ public class GUI extends JFrame{
         } catch (Exception e) {
             e.printStackTrace();
         }
+        /**A vizuális kezelőpanelek létrehozása és beállítása*/
         bgrPanel = new Background();
         eqPanel = new EquipmentPanel();
         attrPanel = new AttributesPanel();
@@ -683,6 +684,7 @@ public class GUI extends JFrame{
                         g.drawString((i+1) + ". " + name, xBase + xPadding, yBase + yPadding * c++);
                     }
                     break;
+                    /**APPLY_AGENT_STEP2: A felhasználó választhat melyik ágenst használja a kiválasztott célponton.*/
                 case APPLY_AGENT_STEP2:
                     g.drawString("0. Cancel", xBase + xPadding, yBase + yPadding * c++);
                     for(int i=0; i < agentInventory.size();i++){
@@ -711,6 +713,7 @@ public class GUI extends JFrame{
                         g.drawString((i+1) + ". " + name, xBase + xPadding, yBase + yPadding * c++);
                     }
                     break;
+                /** STEAL_EQUIPMENT_STEP2: A felhasználó választhat a lehetséges eszközök között.*/
                 case STEAL_EQUIPMENT_STEP2:
                     g.drawString("0. Cancel", xBase + xPadding, yBase + yPadding * c++);
                     if(targetInventory.size()==0){
@@ -722,6 +725,7 @@ public class GUI extends JFrame{
                         name = name.isEmpty() ? "<UNIDENTIFIED>" : name;
                         g.drawString((i+1) + ". " + name, xBase + xPadding, yBase + yPadding * c++);
                     }
+                /** END_GAME: Játék vége.*/
                 case END_GAME: g.drawString("Game over. Press any key to exit.", xBase + xPadding, yBase + yPadding * c++);
                     break;
             }
@@ -788,7 +792,10 @@ public class GUI extends JFrame{
             repaint();
         }
 
-        /** Virológusok és az aktuális pozíciójukat tároló HashMap frissítő függvénye*/
+        /** Virológusok és az aktuális pozíciójukat tároló HashMap frissítő függvénye.
+         * @param v Egy virológus amelyet frissíteni kell.
+         * @param bear Egy boolean, hogy az adott virológus medve-e.
+         **/
         public void update(Virologist v, boolean bear) {
             currID = GameController.objectIDs.get(v);
             virLoc.put(v, fieldCentres.get(v.GetField()));
@@ -800,7 +807,7 @@ public class GUI extends JFrame{
         }
         /**
          * A térkép kezelőfelületét kirajzoló függvény.
-         * @param g Egy grafika példány
+         * @param g Egy grafika példány.
          */
         @Override
         protected void paintComponent(Graphics g) {
@@ -813,6 +820,7 @@ public class GUI extends JFrame{
 
     private int targetStep1 = 0; /** Lépésre kiválasztott mező azonosítója*/
 
+    /** HashMap amely eltárol egy nézetet és egy hozzá tartozó képet.*/
     private final HashMap<IViewable, Image> imgMap = new HashMap<>();
 
     /**
@@ -848,27 +856,25 @@ public class GUI extends JFrame{
         /**
          * Felhasználói input kezelése a lenyomott gomb alapján.
          * Lehetséges opciók:
-         *  Többhasználatú panel állapotának változtatása - q,e
-         *  Karakter irányítása a megjelenő opciók alapján
-         *  Aktuális körön lévő játékos befejezi a körét
-         *  /**
-         *          * Az konzol kezelőfelületének az állapotait renderelő függvény.
-         *          * ÁllapotLehetséges állapotok:
-         *          * DEFAULT:
-         *          * MOVE:
-         *          * APPLY_AGENT_STEP1:
-         *          * APPLY_AGENT_STEP2:
-         *          * CRAFT_AGENT:
-         *          * DROP_EQUIPMENT:
-         *          * CHOP:
-         *          * STEAL_EQUIPMENT_STEP1:
-         *          * STEAL_EQUIPMENT_STEP2:
-         *
-         * @param e Lenyomott gomb eseménye - billentyűkarakter alapján történő kezelés
+         * Többhasználatú panel állapotának változtatása - q,e
+         * Karakter irányítása a megjelenő opciók alapján
+         * Aktuális körön lévő játékos befejezi a körét
+         * /**
+         * Az konzol kezelőfelületének az állapotait renderelő függvény.
+         * ÁllapotLehetséges állapotok:
+         * DEFAULT: A felhasználó adott gomb megnyomása során adott akció állapotába lép.
+         * MOVE: A felhasználó adott gomb megnyomása során adott mezőre lép.
+         * APPLY_AGENT_STEP1: A felhasználó adott gomb megnyomása során adott virológust kiválasztja.
+         * APPLY_AGENT_STEP2: A felhasználó adott gomb megnyomása során adott ágenst ken a kiválasztott virológusra.
+         * CRAFT_AGENT: A felhasználó adott gomb megnyomása során adott eszközt készíti el.
+         * DROP_EQUIPMENT: A felhasználó adott gomb megnyomása során adott eszközt dob el.
+         * CHOP: A felhasználó adott gomb megnyomása során adott virológust támadja meg a baltával.
+         * STEAL_EQUIPMENT_STEP1: A felhasználó adott gomb megnyomása során adott virológust kiválasztja.
+         * STEAL_EQUIPMENT_STEP2: A felhasználó adott gomb megnyomása során adott eszközt lop el a kiválasztottvirológustól.
+         * @param e Lenyomott gomb eseménye - billentyűkarakter alapján történő kezelés.
          */
         @Override
         public void keyPressed(KeyEvent e) {
-
             char input = e.getKeyChar();
             if (input == 'e') {
                 muPanel.state++;
@@ -884,6 +890,7 @@ public class GUI extends JFrame{
                 return;
             } else {
                 switch (state) {
+                    /** DEFAULT: A felhasználó adott gomb megnyomása során adott akció állapotába lép.*/
                     case DEFAULT:
                         switch (input) {
                             case '1': state = GUIState.MOVE; break;
@@ -896,6 +903,7 @@ public class GUI extends JFrame{
                             default:
                                 break;
                         }break;
+                    /** MOVE: A felhasználó adott gomb megnyomása során adott mezőre lép.*/
                     case MOVE:
                         switch (input) {
                             case '0': state = GUIState.DEFAULT; break;
@@ -938,6 +946,7 @@ public class GUI extends JFrame{
                             default:
                                 break;
                         }break;
+                    /** APPLY_AGENT_STEP1: A felhasználó adott gomb megnyomása során adott virológust kiválasztja.*/
                     case APPLY_AGENT_STEP1:
                         switch (input) {
                             case '0':
@@ -982,6 +991,7 @@ public class GUI extends JFrame{
                             default:
                                 break;
                         }break;
+                    /** APPLY_AGENT_STEP2: A felhasználó adott gomb megnyomása során adott ágenst ken a kiválasztott virológusra.*/
                     case APPLY_AGENT_STEP2:
                         switch (input) {
                             case '0':
@@ -1026,6 +1036,7 @@ public class GUI extends JFrame{
                             default:
                                 break;
                         }break;
+                    /** CRAFT_AGENT: A felhasználó adott gomb megnyomása során adott eszközt készíti el.*/
                     case CRAFT_AGENT:
                         switch (input) {
                             case '0':
@@ -1070,6 +1081,7 @@ public class GUI extends JFrame{
                             default:
                                 break;
                         }break;
+                    /** DROP_EQUIPMENT: A felhasználó adott gomb megnyomása során adott eszközt dob el.*/
                     case DROP_EQUIPMENT:
                         switch (input) {
                             case '0':
@@ -1114,6 +1126,7 @@ public class GUI extends JFrame{
                             default:
                                 break;
                         }break;
+                    /** CHOP: A felhasználó adott gomb megnyomása során adott virológust támadja meg a baltával.*/
                     case CHOP:
                         switch (input) {
                             case '0':
@@ -1158,6 +1171,7 @@ public class GUI extends JFrame{
                             default:
                                 break;
                         }break;
+                    /** STEAL_EQUIPMENT_STEP1: A felhasználó adott gomb megnyomása során adott virológust kiválasztja.*/
                     case STEAL_EQUIPMENT_STEP1:
                         switch (input) {
                             case '0':
@@ -1202,6 +1216,7 @@ public class GUI extends JFrame{
                             default:
                                 break;
                         }break;
+                    /** STEAL_EQUIPMENT_STEP2: A felhasználó adott gomb megnyomása során adott eszközt lop el a kiválasztottvirológustól.*/
                     case STEAL_EQUIPMENT_STEP2:
                         switch (input) {
                             case '0':
@@ -1253,11 +1268,19 @@ public class GUI extends JFrame{
             mapPanel.update();
         }
 
+        /**
+         * Egy gomb elengedését megvalósító függvény.
+         * Nincsen használata.
+         * @param e Lenyomott gomb eseménye - billentyűkarakter alapján történő kezelés.
+         */
         @Override
         public void keyReleased(KeyEvent e) {
-
         }
     }
+    /**
+     * A grafikus megjelenítő egy állapotát állítja be a paraméterként beadott állapotra.
+     * @param _state A beállítandó állapot.
+     */
     public void setState(GUIState _state) {
         state = _state;
     }
