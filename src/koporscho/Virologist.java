@@ -99,7 +99,7 @@ public class Virologist extends Character implements IViewable {
 	 */
 	public void AddMaterials(Materials m) {
 		materials.SetNucleotide(materials.GetNucleotide() + m.GetNucleotide());
-		materials.SetAminoAcid(materials.GetAminoAcid() + m.GetNucleotide());
+		materials.SetAminoAcid(materials.GetAminoAcid() + m.GetAminoAcid());
 		NotifyViews();
 	}
 
